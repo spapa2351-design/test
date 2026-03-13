@@ -1,1007 +1,729 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>터치클래스 코스 등록 - 커리큘럼 인덱싱 개편</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .animate-fadeIn { animation: fadeIn 0.2s ease-in-out; }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    input[type="date"]::-webkit-calendar-picker-indicator,
-    input[type="time"]::-webkit-calendar-picker-indicator,
-    input[type="datetime-local"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TouchClass</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#0F172A;overflow:hidden;}
+:root{--b:#4F46E5;--bl:#EEF2FF;--bd:#4338CA;--g:#10B981;--r:#EF4444;--bo:#E2E8F0;--bg:#F8FAFC;--tx:#0F172A;--mu:#64748B;--fa:#94A3B8;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.au{animation:fadeUp .28s both}.ai{animation:fadeIn .2s both}
+.d1{animation-delay:.06s}.d2{animation-delay:.1s}.d3{animation-delay:.16s}
+ 
+/* scrollbars */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:4px}
+ 
+/* layout */
+#app{height:100vh;display:flex;flex-direction:column}
+.hdr{height:56px;background:#fff;border-bottom:1px solid var(--bo);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0}
+.body{flex:1;display:flex;overflow:hidden}
+.lp{flex:1;overflow-y:auto;padding:24px 32px;background:var(--bg)}
+.li{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-bottom:80px}
+.rp{width:380px;background:#fff;border-left:1px solid var(--bo);display:flex;flex-direction:column;overflow:hidden}
+ 
+/* cards */
+.card{background:#fff;border-radius:14px;border:1px solid var(--bo);padding:22px 24px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
+.ct{font-size:15px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+ 
+/* badge */
+.bdg{display:inline-flex;align-items:center;border-radius:99px;font-size:10px;font-weight:700;padding:2px 8px}
+.bi{background:#EEF2FF;color:#4F46E5}.bg{background:#ECFDF5;color:#059669}.br{background:#FEF2F2;color:#DC2626}.bs{background:#F1F5F9;color:#475569}
+ 
+/* toggle */
+.tog{width:40px;height:22px;border-radius:99px;background:#E2E8F0;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;border:none;outline:none}
+.tog.on{background:var(--b)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tog.on::after{transform:translateX(18px)}
+ 
+/* radio */
+.rad{width:16px;height:16px;border-radius:50%;border:2px solid #CBD5E1;display:inline-block;flex-shrink:0;cursor:pointer;transition:border .15s}
+.rad.on{border-color:var(--b);border-width:5px}
+ 
+/* inputs */
+.fld{width:100%;border:1.5px solid var(--bo);border-radius:10px;padding:9px 13px;font-size:13px;color:var(--tx);outline:none;background:#fff;font-family:inherit;transition:border-color .15s}
+.fld:focus{border-color:var(--b);box-shadow:0 0 0 3px rgba(79,70,229,.08)}
+.flbl{font-size:11px;font-weight:700;color:var(--fa);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
+ 
+/* buttons */
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:700;border-radius:10px;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.bp{background:var(--b);color:#fff;padding:9px 18px;font-size:13px;box-shadow:0 2px 8px rgba(79,70,229,.3)}
+.bp:hover{background:var(--bd)}
+.bs2{background:#fff;color:var(--mu);padding:9px 18px;font-size:13px;border:1.5px solid var(--bo)!important}
+.bs2:hover{border-color:#94A3B8!important;color:var(--tx)}
+ 
+/* option row */
+.or{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid #F8FAFC}
+.or:last-child{border-bottom:none}
+ 
+/* rule card */
+.rc{border:1.5px solid var(--bo);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.rc.on{border-color:var(--b);background:#F5F7FF;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+ 
+/* info box */
+.ib{background:#F0F4FF;border:1px solid #C7D2FE;border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:12px;color:#4F46E5;line-height:1.6;font-weight:500}
+ 
+/* table */
+.stbl{width:100%;border-collapse:collapse}
+.stbl th{font-size:11px;font-weight:600;color:var(--fa);text-transform:uppercase;letter-spacing:.05em;padding:10px 8px;text-align:left;background:#F8FAFC;border-bottom:1px solid var(--bo)}
+.stbl td{padding:8px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
+.stbl tr:last-child td{border-bottom:none}
+.stbl tbody tr:hover td{background:#FAFBFF}
+ 
+/* batch btn */
+.bbt{width:100%;padding:13px;background:#0F172A;color:#fff;font-weight:800;font-size:14px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.bbt:hover{background:#1E293B}
+ 
+/* day btns */
+.dw{display:flex;gap:5px}
+.db{width:34px;height:34px;border-radius:50%;font-size:12px;font-weight:700;border:1.5px solid var(--bo);background:#fff;color:var(--mu);cursor:pointer;font-family:inherit;transition:all .15s}
+.db.on{background:var(--b);color:#fff;border-color:var(--b)}
+ 
+/* roadmap */
+.rmh{padding:14px 18px;border-bottom:1px solid #F1F5F9;background:#FAFBFD;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.rmb{flex:1;overflow-y:auto;padding:18px}
+.rmf{padding:13px 16px;border-top:1px solid #F1F5F9;background:#FAFBFD;display:flex;gap:8px;flex-shrink:0}
+.rmt{flex:1;padding:9px;background:#fff;border:1.5px solid var(--bo);border-radius:10px;font-size:11px;font-weight:700;color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;transition:all .15s}
+.rmt:hover{border-color:var(--b);color:var(--b)}
+.rmc{position:relative;margin-bottom:22px}
+.rmcl{position:absolute;left:11px;top:28px;bottom:-8px;width:2px;background:linear-gradient(to bottom,#E2E8F0 80%,transparent)}
+.rmch{display:flex;align-items:center;gap:8px;margin-bottom:12px;position:relative;z-index:1}
+.rmn{width:24px;height:24px;background:#0F172A;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:800;color:#fff}
+.rmis{padding-left:28px;display:flex;flex-direction:column;gap:8px}
+.rmi{position:relative}
+.rmi::before{content:'';position:absolute;left:-17px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #CBD5E1;z-index:1}
+.rmi.nb::before{border-color:var(--b)}
+.rmi.ng::before{border-color:var(--g)}
+.rmic{background:#fff;border:1px solid var(--bo);border-radius:12px;padding:11px 13px;transition:all .15s;cursor:pointer}
+.rmic:hover{border-color:var(--b);transform:translateX(2px)}
+.rmic.gi{border-color:#A7F3D0;background:#F0FDF9}
+.rqb{font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .15s}
+.rqr{background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE}
+.rqo{background:#F8FAFC;color:var(--fa);border-color:var(--bo)}
+.cb{background:#F8FAFC;border:1px solid var(--bo);border-radius:8px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-top:8px}
+.cb:hover{border-color:var(--b)}
+ 
+/* modal */
+.ovl{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;z-index:200}
+.mdl{background:#fff;border-radius:20px;box-shadow:0 24px 80px rgba(15,23,42,.25);overflow:hidden;animation:fadeUp .28s both}
+.mh{padding:17px 22px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#FAFBFD}
+.mf{padding:14px 22px;border-top:1px solid #F1F5F9;background:#FAFBFD;display:flex;justify-content:flex-end;gap:8px}
+.mb{padding:22px;overflow-y:auto;max-height:56vh}
+ 
+/* lib modal */
+.lbm{width:min(820px,92vw);height:560px;display:flex;flex-direction:column}
+.lbs{display:flex;flex:1;overflow:hidden}
+.lbsd{width:150px;border-right:1px solid #F1F5F9;background:#FAFBFD;padding:12px;flex-shrink:0}
+.lbmn{flex:1;display:flex;flex-direction:column;padding:20px;overflow:hidden}
+.lbl{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.lbc{width:100%;text-align:left;padding:8px 10px;border-radius:8px;font-size:13px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:var(--mu);font-weight:500;display:block}
+.lbc.on{background:#EEF2FF;color:#4F46E5;font-weight:700}
+.lbi{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--bo);border-radius:12px;cursor:pointer;transition:all .15s}
+.lbi:hover{border-color:var(--b);background:#F5F7FF}
+ 
+/* selection screen */
+.sel{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:900px;width:100%;margin-top:36px}
+.tc{background:#fff;border-radius:20px;border:1.5px solid var(--bo);padding:28px 24px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.tc:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(15,23,42,.1)}
+.tci{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:22px}
+.tcb{position:absolute;bottom:12px;right:12px;font-size:56px;opacity:.07;line-height:1;pointer-events:none}
+ 
+/* notice */
+.ofn{background:#FFF8F8;border:1px solid #FECDD3;border-radius:14px;padding:18px;text-align:center;margin-bottom:18px}
+ 
+/* empty */
+.emp{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;border:1.5px dashed #CBD5E1;border-radius:14px;background:#FAFBFC;text-align:center;gap:8px}
+ 
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.rg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
+ 
+/* utils */
+.fl{display:flex}.ac{align-items:center}.sb{justify-content:space-between}.f1{flex:1}.mw0{min-width:0}
+.col{flex-direction:column}
+.g4{gap:4px}.g6{gap:6px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.g14{gap:14px}.g16{gap:16px}.g18{gap:18px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt14{margin-top:14px}.mt16{margin-top:16px}
+.mb6{margin-bottom:6px}.mb8{margin-bottom:8px}.mb10{margin-bottom:10px}.mb14{margin-bottom:14px}.mb16{margin-bottom:16px}.mb18{margin-bottom:18px}
+.pt12{padding-top:12px}.bt{border-top:1px solid #F1F5F9}.bb{border-bottom:1px solid #F8FAFC}
+.fw7{font-weight:700}.fw8{font-weight:800}
+.f10{font-size:10px}.f11{font-size:11px}.f12{font-size:12px}.f13{font-size:13px}.f14{font-size:14px}
+.cm{color:var(--mu)}.cf{color:var(--fa)}.cb2{color:var(--b)}
+.uc{text-transform:uppercase;letter-spacing:.05em}
+.tr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdot{width:6px;height:6px;border-radius:50%;background:#CBD5E1}
+.pdot.on{width:20px;border-radius:3px;background:var(--b)}
+input[type=date]::-webkit-calendar-picker-indicator,
+input[type=time]::-webkit-calendar-picker-indicator,
+input[type=datetime-local]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.5}
+</style>
 </head>
-<body class="bg-[#f4f7fa] overflow-hidden">
-  <div id="root"></div>
-
-  <script type="text/babel" data-type="module">
-    import React, { useState } from 'https://esm.sh/react@18.2.0';
-    import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
-    import * as Lucide from 'https://esm.sh/lucide-react@0.292.0?deps=react@18.2.0,react-dom@18.2.0';
-
-    const { Video, MapPin, Layers, Plus, FileText, List, CheckCircle, Trash2, Search, Info, X, UploadCloud, FileVideo, Save, ChevronDown, ChevronRight, RotateCcw, AlertCircle, Image: ImageIcon, GripVertical, Settings2, CalendarDays, QrCode, Zap, Wand2 } = Lucide;
-
-    // --- Components ---
-    const SectionTitle = ({ num, title, badge }) => {
-      let badgeClass = 'bg-slate-200 text-slate-600';
-      if (badge === '오프라인 특화' || badge === '오프라인 핵심') {
-        badgeClass = 'bg-red-100 text-red-600';
+<body>
+<div id="app"></div>
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+var S = {
+  view:'selection', ctype:null, rule:'single',
+  days:['월','수','금'],
+  sessions:[
+    {id:1,date:'',st:'',et:'',place:'',cap:30},
+    {id:2,date:'',st:'',et:'',place:'',cap:30}
+  ],
+  mods:[], tog:{en1:false,en2:false,mon:false,unl:false,seq:false,pre:false,qr:true,man:true},
+  libOpen:false, libCat:'all', setOpen:false, setTitle:''
+};
+ 
+function upd(patch){Object.assign(S,patch);render();}
+ 
+// ─── ICONS ───────────────────────────────────────────────────────────────────
+var IC={
+  video:'<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
+  map:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  layers:'<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  cr:'<polyline points="9 18 15 12 9 6"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>',
+  list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>',
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  chk:'<polyline points="20 6 9 17 4 12"/>',
+  cog:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  info:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  qr:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  wand:'<path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/>',
+  up:'<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>',
+  srch:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  rot:'<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.38"/>'
+};
+function ic(n,sz,col){
+  var f=n==='zap'?'currentColor':'none';
+  var s='display:inline-block;vertical-align:middle;flex-shrink:0;'+(col?'color:'+col+';':'');
+  return '<svg width="'+(sz||16)+'" height="'+(sz||16)+'" viewBox="0 0 24 24" fill="'+f+'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="'+s+'">'+(IC[n]||'')+'</svg>';
+}
+ 
+// ─── LIB DATA ─────────────────────────────────────────────────────────────────
+var LIB=[
+  {t:'2025년 기업문화 핵심가치 내재화 특강',type:'video',time:'45:20',date:'2026.01.15'},
+  {t:'신규 입사자 시스템 가이드(기본편)',type:'doc',time:'-',date:'2025.11.20'},
+  {t:'직장 내 성희롱 예방 교육 (법정의무)',type:'video',time:'60:00',date:'2025.10.05'},
+  {t:'2025 상반기 임직원 만족도 설문',type:'survey',time:'-',date:'2025.09.12'},
+  {t:'신입사원 OJT 최종 평가',type:'exam',time:'20문항',date:'2026.02.10'},
+  {t:'보안 인식 중간 점검',type:'exam',time:'10문항',date:'2026.01.05'}
+];
+ 
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('app').innerHTML = S.view==='selection' ? selHTML() : editorHTML();
+  bind();
+}
+ 
+// ── SELECTION ─────────────────────────────────────────────────────────────────
+function selHTML(){
+  var types=[
+    {id:'online', e:'🎬',label:'온라인 코스',   bg:'#DBEAFE',desc:'비대면·자기주도 학습 과정을 설계합니다. VOD, 문서, 시험을 자유롭게 조합하세요.',tags:['VOD','문서','시험/퀴즈']},
+    {id:'offline',e:'📍',label:'오프라인 코스',  bg:'#FFE4E6',desc:'집합 교육과 출석 관리에 최적화된 플로우입니다. QR 출석 및 회차 관리를 지원합니다.',tags:['회차 관리','QR 출석','수기 처리']},
+    {id:'blended',e:'✨',label:'블렌디드 코스',  bg:'#EDE9FE',desc:'온/오프라인을 유기적으로 결합합니다. 사전·사후 학습부터 현장 교육, 평가까지 한 흐름으로.',tags:['온+오프 결합','사전 학습']}
+  ];
+  var cards=types.map(function(t,i){
+    var tags=t.tags.map(function(tg){return '<span class="bdg bs">'+tg+'</span>';}).join('');
+    return '<div class="tc au" style="animation-delay:'+(i*0.07)+'s" data-action="seltype" data-val="'+t.id+'">'+
+      '<div class="tci" style="background:'+t.bg+'">'+t.e+'</div>'+
+      '<div style="font-size:17px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em">'+t.label+'</div>'+
+      '<div style="font-size:13px;color:#64748B;line-height:1.65;margin-bottom:16px">'+t.desc+'</div>'+
+      '<div class="fl" style="flex-wrap:wrap;gap:6px">'+tags+'</div>'+
+      '<div class="tcb">'+t.e+'</div></div>';
+  }).join('');
+  return '<div class="sel">'+
+    '<div class="fl ac g10 au" style="margin-bottom:44px">'+
+      '<div style="width:30px;height:30px;background:#4F46E5;border-radius:8px;display:flex;align-items:center;justify-content:center">'+ic('layers',14,'#fff')+'</div>'+
+      '<span style="font-weight:800;font-size:15px">TouchClass</span>'+
+      '<span style="color:#CBD5E1;margin:0 6px">—</span>'+
+      '<span style="font-size:13px;color:#64748B">새 코스 만들기</span></div>'+
+    '<div class="au d1" style="text-align:center">'+
+      '<h1 style="font-size:28px;font-weight:800;margin-bottom:8px;letter-spacing:-.03em">어떤 코스를 개설하시겠어요?</h1>'+
+      '<p style="font-size:13px;color:#64748B">코스 유형에 따라 최적화된 등록 환경이 자동으로 구성됩니다</p></div>'+
+    '<div class="tg">'+cards+'</div>'+
+    '<p class="au d3" style="font-size:12px;color:#94A3B8;margin-top:28px">등록 후에도 코스 유형 일부 설정은 변경 가능합니다</p></div>';
+}
+ 
+// ── EDITOR ────────────────────────────────────────────────────────────────────
+function editorHTML(){
+  var lbl={online:'온라인',offline:'오프라인',blended:'블렌디드'}[S.ctype];
+  var emj={online:'🎬',offline:'📍',blended:'✨'}[S.ctype];
+  var bc=S.ctype==='offline'?'br':'bi';
+  var isOff=S.ctype==='offline'||S.ctype==='blended';
+  return '<div id="app" class="ai" style="height:100vh;display:flex;flex-direction:column">'+
+    hdrHTML(lbl,emj,bc)+
+    '<div class="body">'+leftHTML(isOff)+rightHTML()+'</div>'+
+    (S.setOpen?setModalHTML():'')+
+    (S.libOpen?libModalHTML():'')+
+    '</div>';
+}
+ 
+function hdrHTML(lbl,emj,bc){
+  return '<div class="hdr">'+
+    '<button class="btn" data-action="goback" style="background:none;color:#94A3B8;padding:4px">'+ic('x',18)+'</button>'+
+    '<div style="width:1px;height:18px;background:#E2E8F0"></div>'+
+    '<div class="fl ac g8">'+
+      '<span style="font-size:12px;color:#94A3B8">코스 등록</span>'+ic('cr',13,'#CBD5E1')+
+      '<span class="bdg '+bc+'" style="font-size:11px">'+emj+' '+lbl+'</span></div>'+
+    '<div class="fl ac g4" style="margin-left:auto;margin-right:14px">'+
+      '<div class="pdot on"></div><div class="pdot"></div><div class="pdot"></div></div>'+
+    '<button class="btn bs2" style="padding:7px 14px;font-size:12px">임시저장</button>'+
+    '<button class="btn bp" style="padding:7px 14px;font-size:12px">등록 완료</button></div>';
+}
+ 
+// ── LEFT PANEL ────────────────────────────────────────────────────────────────
+function leftHTML(isOff){
+  var h='<div class="lp"><div class="li">';
+  h+=basicCard();
+  h+=enrollCard();
+  h+=periodCard();
+  if(isOff){h+=policyCard();h+=sessionsCard();}
+  h+=optionsCard();
+  h+='</div></div>';
+  return h;
+}
+ 
+function tog_el(key){
+  return '<button class="tog'+(S.tog[key]?' on':'')+'" data-action="tog" data-key="'+key+'"></button>';
+}
+function rad(on){return '<span class="rad'+(on?' on':'')+'"></span>';}
+function req_btn(isReq){
+  return '<button class="rqb '+(isReq?'rqr':'rqo')+'" data-action="reqtog">'+( isReq?'필수':'선택')+'</button>';
+}
+ 
+function basicCard(){
+  return '<div class="card au d1">'+
+    '<div class="ct">코스 기본 정보</div>'+
+    '<div class="fl col g14">'+
+      '<div class="fl ac g12"><span class="flbl" style="width:68px;margin:0;flex-shrink:0">코스 분류</span>'+
+        '<button class="btn bp" style="padding:6px 12px;font-size:12px">'+ic('plus',12,'#fff')+' 분류 선택</button></div>'+
+      '<div style="position:relative"><label style="position:absolute;top:-8px;left:12px;background:#fff;padding:0 4px;font-size:11px;font-weight:700;color:#4F46E5;z-index:1">코스명</label>'+
+        '<input class="fld" style="border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.08)" value="2026년 3월 온보딩 코스"></div>'+
+      '<div style="position:relative"><label style="position:absolute;top:-8px;left:12px;background:#fff;padding:0 4px;font-size:11px;font-weight:600;color:#94A3B8;z-index:1">코스 소개</label>'+
+        '<input class="fld" placeholder="코스에 대한 간단한 소개를 입력하세요"></div>'+
+      '<div class="fl ac g16" style="padding-top:12px;border-top:1px solid #F8FAFC">'+
+        '<span class="flbl" style="width:68px;margin:0;flex-shrink:0">상단 표시</span>'+
+        '<label class="fl ac g8" style="cursor:pointer">'+rad(true)+'<span style="font-size:13px;font-weight:600;color:#334155">기본(표지)</span></label>'+
+        '<label class="fl ac g8" style="cursor:pointer">'+rad(false)+'<span style="font-size:13px;color:#64748B">이미지(최대 5장)</span></label>'+
+      '</div></div></div>';
+}
+ 
+function enrollCard(){
+  return '<div class="card au d1">'+
+    '<div class="ct">수강 등록 방식</div>'+
+    '<div class="or"><div>'+
+      '<div style="font-size:14px;font-weight:600">회원이 직접 신청</div>'+
+      '<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+(S.tog.en1?'사용 중':'수강 목록에서 학습자가 직접 신청합니다')+'</div></div>'+
+      tog_el('en1')+'</div>'+
+    '<div class="or"><div>'+
+      '<div style="font-size:14px;font-weight:600">관리자 일괄 등록</div>'+
+      '<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+(S.tog.en2?'사용 중':'관리자가 대상자를 지정하여 등록합니다')+'</div></div>'+
+      tog_el('en2')+'</div></div>';
+}
+ 
+function periodCard(){
+  return '<div class="card au d2">'+
+    '<div class="ct">수강 기간 지정</div>'+
+    '<div class="fl col g14">'+
+      '<label class="fl ac g10" style="cursor:pointer">'+rad(true)+'<span style="font-size:13px;font-weight:600">기간 직접 지정</span></label>'+
+      '<div class="fl ac g8" style="padding-left:26px">'+
+        '<input type="datetime-local" class="fld" style="max-width:195px;font-size:12px" value="2026-03-01T09:00">'+
+        '<span style="color:#94A3B8">—</span>'+
+        '<input type="datetime-local" class="fld" style="max-width:195px;font-size:12px" value="2026-03-31T23:59">'+
+      '</div>'+
+      '<label class="fl ac g10" style="cursor:pointer">'+rad(false)+'<span style="font-size:13px;color:#64748B">수강 시작일 기준</span></label>'+
+      '<label class="fl ac g10" style="cursor:pointer">'+rad(false)+'<span style="font-size:13px;color:#64748B">제한 없음</span></label>'+
+    '</div></div>';
+}
+ 
+function policyCard(){
+  return '<div class="card au">'+
+    '<div class="ct"><span class="bdg br">오프라인 특화</span>오프라인 운영 및 출결 정책</div>'+
+    '<div class="g2 mb18">'+
+      '<div><label class="flbl">담당 강사</label><input class="fld" placeholder="강사명 입력"></div>'+
+      '<div><label class="flbl">기본 교육 장소</label><input class="fld" placeholder="예) 본사 2층 제1교육장"></div>'+
+    '</div>'+
+    '<div class="or"><div class="fl ac g10 f1" style="margin-right:12px">'+
+      '<div style="width:30px;height:30px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('qr',13,'#64748B')+'</div>'+
+      '<div><div style="font-size:13px;font-weight:600">QR 코드 출석 관리 연동</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">각 회차마다 고유 QR 코드를 발급하여 현장 출석을 실시간으로 연동합니다</div></div></div>'+
+      tog_el('qr')+'</div>'+
+    '<div class="or"><div class="fl ac g10 f1" style="margin-right:12px">'+
+      '<div style="width:30px;height:30px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('chk',13,'#64748B')+'</div>'+
+      '<div><div style="font-size:13px;font-weight:600">관리자 수기 출석 처리 허용</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">앱 미설치 등 예외 상황 발생 시 관리자가 직접 출석 처리할 수 있습니다</div></div></div>'+
+      tog_el('man')+'</div></div>';
+}
+ 
+function sessionsCard(){
+  var rules=[
+    {id:'single',icon:'①',label:'단일 회차 선택',desc:'여러 일정 중 학습자가 1개만 선택하여 수강합니다'},
+    {id:'multiple',icon:'⊞',label:'복수 회차 선택',desc:'지정된 수량만큼 조합하여 선택 수강합니다'},
+    {id:'all',icon:'🗓',label:'전체 회차 필수',desc:'모든 회차에 일괄 자동 등록됩니다'}
+  ];
+  var rcards=rules.map(function(r){
+    var a=S.rule===r.id;
+    var extra='';
+    if(r.id==='multiple'&&a){
+      extra='<div class="fl ac g6" style="margin-top:10px;font-size:12px;font-weight:700;color:#4F46E5;background:#fff;border:1px solid #C7D2FE;border-radius:8px;padding:6px 10px">'+
+        '필수 수강: <input type="number" value="3" style="width:36px;border:1px solid #E2E8F0;border-radius:6px;padding:2px 4px;text-align:center;outline:none;font-weight:700;font-family:inherit"> 회차</div>';
+    }
+    return '<div class="rc'+(a?' on':'')+'" data-action="setrule" data-val="'+r.id+'">'+
+      '<div style="position:absolute;top:13px;right:13px">'+rad(a)+'</div>'+
+      '<div style="width:30px;height:30px;border-radius:8px;background:'+(a?'#4F46E5':'#F1F5F9')+';color:'+(a?'#fff':'#64748B')+';display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:14px;font-weight:800">'+r.icon+'</div>'+
+      '<div style="font-size:13px;font-weight:700;color:'+(a?'#4F46E5':'#334155')+';margin-bottom:6px">'+r.label+'</div>'+
+      '<div style="font-size:11px;color:#94A3B8;line-height:1.55">'+r.desc+'</div>'+extra+'</div>';
+  }).join('');
+ 
+  var content=S.rule==='all'?batchContent():manualContent();
+ 
+  return '<div class="card au">'+
+    '<div class="ct"><span class="bdg br">오프라인 핵심</span>수강 신청 방식 및 회차(세션) 구성</div>'+
+    '<div class="flbl mb8">학습자 이수 규칙</div>'+
+    '<div class="rg">'+rcards+'</div>'+
+    content+'</div>';
+}
+ 
+function batchContent(){
+  var bDone=S.sessions.length>0&&S.sessions[0].id>=200;
+  var dBtns=['일','월','화','수','목','금','토'].map(function(d){
+    return '<button class="db'+(S.days.indexOf(d)>=0?' on':'')+'" data-action="togday" data-val="'+d+'">'+d+'</button>';
+  }).join('');
+  var trows='';
+  if(bDone){
+    trows=S.sessions.map(function(s,i){
+      return '<tr>'+
+        '<td><span style="font-weight:800;color:#4F46E5;font-size:12px">'+(i+1)+'회차</span></td>'+
+        '<td style="font-size:13px;font-weight:500">'+s.date+'</td>'+
+        '<td style="font-size:12px;color:#64748B">'+s.st+' – '+s.et+'</td>'+
+        '<td style="font-size:12px;color:#94A3B8">기본 장소</td>'+
+        '<td style="text-align:center;font-weight:600">'+s.cap+'</td>'+
+        '<td style="text-align:center;color:#CBD5E1">—</td></tr>';
+    }).join('');
+  } else {
+    trows='<tr><td colspan="6"><div class="emp" style="border:none;padding:28px 20px">'+
+      '<span style="font-size:24px">📅</span>'+
+      '<p style="font-size:12px;color:#94A3B8">조건을 설정하고 일괄 생성 버튼을 눌러주세요</p></div></td></tr>';
+  }
+  return '<div class="ib">'+ic('zap',15,'#4F46E5')+'<p><strong>일괄 생성 모드</strong> — 정기적으로 반복되는 회차 일정을 요일 기반으로 자동 생성합니다</p></div>'+
+    '<div style="background:#F8FAFC;border-radius:14px;padding:18px;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:16px;margin-bottom:16px">'+
+      '<div class="g2">'+
+        '<div><label class="flbl">진행 기간</label><div class="fl ac g6"><input type="date" class="fld" style="font-size:12px" value="2026-03-01"><span style="color:#94A3B8">—</span><input type="date" class="fld" style="font-size:12px" value="2026-03-31"></div></div>'+
+        '<div><label class="flbl">반복 요일</label><div class="dw">'+dBtns+'</div></div>'+
+      '</div>'+
+      '<div class="g3">'+
+        '<div><label class="flbl">공통 시간</label><div class="fl ac g5"><input type="time" class="fld" style="font-size:12px" value="22:00"><span style="color:#94A3B8;font-size:12px">—</span><input type="time" class="fld" style="font-size:12px" value="23:00"></div></div>'+
+        '<div><label class="flbl">공통 정원 (명)</label><input type="number" class="fld" value="30"></div>'+
+        '<div><label class="flbl">그룹 제한</label><input class="fld" placeholder="제한 없음"></div>'+
+      '</div>'+
+      '<button class="bbt" data-action="batch">'+ic('wand',15,'#fff')+' 설정한 규칙으로 전체 회차 일괄 생성</button>'+
+    '</div>'+
+    '<div style="font-size:12px;color:#94A3B8;margin-bottom:8px;font-weight:600">생성된 회차 목록 '+(bDone?'<span style="color:#10B981;margin-left:4px">✓ '+S.sessions.length+'개 생성됨</span>':'')+'</div>'+
+    '<div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">'+
+      '<table class="stbl"><thead><tr>'+
+        '<th style="width:55px">회차</th><th>교육 일자</th><th>교육 시간</th><th>장소</th>'+
+        '<th style="text-align:center;width:60px">정원</th><th style="text-align:center;width:65px">그룹</th></tr></thead>'+
+      '<tbody>'+trows+'</tbody></table></div>';
+}
+ 
+function manualContent(){
+  var rows=S.sessions.filter(function(s){return s.id<200;}).map(function(s,i){
+    return '<tr>'+
+      '<td style="text-align:center;font-weight:800;color:#4F46E5;font-size:13px">'+(i+1)+'</td>'+
+      '<td><input type="date" class="fld s-date" data-sid="'+s.id+'" style="padding:7px 9px;font-size:12px" value="'+s.date+'"></td>'+
+      '<td><div class="fl ac" style="gap:3px">'+
+        '<input type="time" class="fld s-st" data-sid="'+s.id+'" style="padding:7px;font-size:12px;min-width:84px" value="'+s.st+'">'+
+        '<span style="color:#94A3B8;font-size:12px">—</span>'+
+        '<input type="time" class="fld s-et" data-sid="'+s.id+'" style="padding:7px;font-size:12px;min-width:84px" value="'+s.et+'">'+
+      '</div></td>'+
+      '<td><input class="fld s-pl" data-sid="'+s.id+'" style="padding:7px 9px;font-size:12px" placeholder="기본 장소" value="'+s.place+'"></td>'+
+      '<td style="text-align:center"><input type="number" class="fld s-cp" data-sid="'+s.id+'" style="padding:7px 4px;font-size:12px;text-align:center;width:52px" value="'+s.cap+'"></td>'+
+      '<td style="text-align:center"><button style="width:26px;height:26px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;cursor:pointer;font-size:11px;color:#94A3B8;font-family:inherit">—</button></td>'+
+      '<td><button class="btn" data-action="remsess" data-sid="'+s.id+'" style="background:none;color:#CBD5E1;padding:4px">'+ic('trash',14)+'</button></td>'+
+    '</tr>';
+  }).join('');
+  var msg=S.rule==='single'?
+    '학습자가 선택할 수 있는 일정(선택지)을 하나씩 추가하세요. 학습자는 이 중 단 1개만 선택 가능합니다.':
+    '전체 회차 풀을 구성하세요. 학습자는 지정된 수량을 자유롭게 조합하여 선택합니다.';
+  return '<div class="ib">'+ic('info',15,'#4F46E5')+'<p>'+msg+'</p></div>'+
+    '<div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">'+
+      '<table class="stbl"><thead><tr>'+
+        '<th style="width:40px;text-align:center">#</th><th>교육 일자</th><th>교육 시간</th><th>장소</th>'+
+        '<th style="text-align:center;width:66px">정원</th><th style="text-align:center;width:56px">그룹</th><th style="width:32px"></th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table>'+
+      '<button data-action="addsess" style="width:100%;padding:11px;background:#fff;border:none;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:700;color:#64748B;cursor:pointer;font-family:inherit;border-radius:0 0 12px 12px">'+ic('plus',13)+' 선택 일정(회차) 추가하기</button>'+
+    '</div>';
+}
+ 
+function optionsCard(){
+  var opts=[
+    {k:'mon',label:'자리 비움 모니터링',desc:'장시간 자리 비움 시 학습 일시정지 및 알림을 발송합니다'},
+    {k:'unl',label:'커리큘럼별 공개일 설정',desc:'수강 시작 시 모든 커리큘럼 공개 (기본값)'},
+    {k:'seq',label:'순서대로 수강하기',desc:'이전 항목 완료 후 다음 항목에 접근 가능합니다'},
+    {k:'pre',label:'수강 전 코스 정보 미리보기',desc:'코스 목록에서 상세 정보를 먼저 확인할 수 있습니다'}
+  ];
+  var rows=opts.map(function(o){
+    return '<div class="or"><div>'+
+      '<div style="font-size:14px;font-weight:600">'+o.label+'</div>'+
+      '<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+o.desc+'</div></div>'+
+      tog_el(o.k)+'</div>';
+  }).join('');
+  return '<div class="card au"><div class="ct">코스 상세 옵션</div>'+rows+'</div>';
+}
+ 
+// ── RIGHT PANEL ───────────────────────────────────────────────────────────────
+function rightHTML(){
+  return '<div class="rp">'+
+    (S.ctype==='offline'?offRoadmapHTML():freeRoadmapHTML())+
+    '</div>';
+}
+ 
+function offRoadmapHTML(){
+  var items='';
+  if(S.sessions.length>0){
+    items=S.sessions.map(function(s,i){
+      var lbl=(S.rule==='single'?'선택 옵션 '+(i+1):(i+1)+'회차')+' — 오프라인 교육';
+      var sub=s.date?(s.date+' · '+s.st+'–'+s.et):'일정 미입력';
+      var isReq=S.rule==='all';
+      var cond=isReq?'<div style="margin-top:8px;padding-top:8px;border-top:1px solid #F1F5F9;display:flex;gap:6px;font-size:10px;color:#64748B"><span style="font-weight:700;color:#4F46E5">이수 조건</span><span>출석 처리 완료 시 자동 이수</span></div>':'';
+      return '<div class="rmi ng">'+
+        '<div class="rmic">'+
+          '<div class="fl ac g10">'+
+            '<div style="width:30px;height:30px;background:#ECFDF5;color:#059669;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('map',14)+'</div>'+
+            '<div class="f1 mw0"><div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>'+
+              '<div style="font-size:10px;color:#94A3B8;margin-top:2px">'+sub+'</div></div>'+
+            '<button class="rqb '+(isReq?'rqr':'rqo')+'" data-action="reqtog">'+(isReq?'필수':'선택')+'</button>'+
+          '</div>'+cond+'</div></div>';
+    }).join('');
+  } else {
+    items='<div class="emp"><span style="font-size:24px">📅</span><p style="font-size:11px;color:#94A3B8">좌측에서 회차를 추가해주세요</p></div>';
+  }
+  return '<div class="rmh">'+
+      '<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'+
+        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div></div>'+
+    '<div class="rmb">'+
+      '<div class="ofn">'+
+        '<div style="font-size:28px;margin-bottom:8px">📍</div>'+
+        '<div style="font-size:13px;font-weight:800;margin-bottom:6px">오프라인 자동 커리큘럼</div>'+
+        '<div style="font-size:11px;color:#64748B;line-height:1.65;margin-bottom:14px">순수 오프라인 코스는 별도 목차 조립 없이<br>좌측 <strong>회차 설정이 로드맵에 자동 반영</strong>됩니다</div>'+
+        '<div style="border-top:1px solid #FECDD3;padding-top:12px">'+
+          '<p style="font-size:10px;color:#94A3B8;margin-bottom:8px">온라인 사전/사후 학습을 추가하시겠어요?</p>'+
+          '<button data-action="toblended" style="width:100%;background:#fff;border:1.5px solid #4F46E5;color:#4F46E5;border-radius:10px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">블렌디드 코스로 전환</button>'+
+        '</div></div>'+
+      '<div class="rmc">'+
+        '<div class="rmch"><div class="rmn">01</div>'+
+          '<span style="font-size:13px;font-weight:800">현장 교육 참석 및 출석</span>'+
+          '<span class="bdg bg" style="margin-left:auto">'+S.sessions.length+' Sessions</span></div>'+
+        '<div class="rmcl"></div>'+
+        '<div class="rmis">'+items+'</div></div>'+
+      '<div style="padding-top:12px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center">'+
+        '<div class="fl ac g6" style="font-size:12px;color:#64748B;font-weight:600">'+ic('chk',14,'#10B981')+' 회차 자동 연동 중</div>'+
+        '<span style="font-size:12px;font-weight:800;color:#4F46E5">총 '+S.sessions.length+'회차</span></div>'+
+    '</div>';
+}
+ 
+function rmItem(iconName,iconBg,iconColor,title,sub,isReq,hasCond,greenStyle){
+  var nCls=greenStyle?'ng':'nb';
+  var iCls=greenStyle?'rmic gi':'rmic';
+  var tColor=greenStyle?'#065F46':'#0F172A';
+  var sColor=greenStyle?'#10B981':'#94A3B8';
+  var sWeight=greenStyle?'700':'400';
+  var condEl='';
+  if(isReq&&hasCond){
+    condEl='<div class="cb" data-action="opensettings" data-title="'+title+'">'+
+      '<div class="fl ac g6" style="font-size:10px;color:#64748B">'+
+        '<span style="font-weight:700;color:#4F46E5">이수 조건</span>'+
+        '<span>'+hasCond+'</span></div>'+
+      ic('cog',12,'#94A3B8')+'</div>';
+  }
+  return '<div class="rmi '+nCls+'">'+
+    '<div class="'+iCls+'">'+
+      '<div class="fl ac g10">'+
+        '<div style="width:30px;height:30px;background:'+iconBg+';color:'+iconColor+';border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic(iconName,14)+'</div>'+
+        '<div class="f1 mw0">'+
+          '<div style="font-size:12px;font-weight:700;color:'+tColor+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+title+'</div>'+
+          '<div style="font-size:10px;color:'+sColor+';margin-top:2px;text-transform:uppercase;font-weight:'+sWeight+'">'+sub+'</div>'+
+        '</div>'+
+        req_btn(isReq)+
+      '</div>'+condEl+
+    '</div></div>';
+}
+ 
+function freeRoadmapHTML(){
+  var chN=S.ctype==='blended'?3:2;
+  var blendedCh='';
+  if(S.ctype==='blended'){
+    blendedCh='<div class="rmc">'+
+      '<div class="rmch"><div class="rmn">02</div>'+
+        '<span style="font-size:13px;font-weight:800">현장 실습 및 네트워킹</span></div>'+
+      '<div class="rmcl"></div>'+
+      '<div class="rmis">'+rmItem('map','#D1FAE5','#059669','현장 출석 체크','OFFLINE SESSION LINKED',true,null,true)+'</div></div>';
+  }
+  var customChs=S.mods.map(function(m,idx){
+    var n=chN+idx;
+    return '<div class="rmc">'+
+      '<div class="rmch"><div class="rmn">'+String(n).padStart(2,'0')+'</div>'+
+        '<input value="'+m.title+'" style="font-size:13px;font-weight:800;background:transparent;border:none;outline:none;flex:1;font-family:inherit">'+
+        '<button data-action="removemod" data-mid="'+m.id+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:4px">'+ic('trash',13)+'</button></div>'+
+      '<div class="rmcl"></div>'+
+      '<div class="rmis"><div class="emp" style="padding:20px">'+
+        '<span style="font-size:18px">➕</span>'+
+        '<span style="font-size:11px;color:#94A3B8;font-weight:600">학습 항목이 없습니다</span>'+
+        '<button data-action="openlib" style="font-size:11px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:5px 12px;cursor:pointer;color:#64748B;font-weight:700;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',11)+' 항목 매핑</button>'+
+      '</div></div></div>';
+  }).join('');
+ 
+  return '<div class="rmh">'+
+      '<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'+
+        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div>'+
+      '<button data-action="openlib" style="background:#F1F5F9;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',12)+' 항목 추가</button></div>'+
+    '<div class="rmb">'+
+      '<div class="rmc">'+
+        '<div class="rmch"><div class="rmn">01</div>'+
+          '<span style="font-size:13px;font-weight:800">오리엔테이션 및 기초 학습</span></div>'+
+        '<div class="rmcl"></div>'+
+        '<div class="rmis">'+
+          rmItem('video','#DBEAFE','#2563EB','신입사원 환영사 및 비전 공유','Video · 15:00',true,'진도율 100% · 최소 15분 · 스킵 방지 ON',false)+
+          rmItem('doc','#F1F5F9','#64748B','사내 핵심가치 가이드북','Document · PDF',false,null,false)+
+        '</div></div>'+
+      blendedCh+customChs+
+      '<button data-action="addmod" style="width:100%;margin-top:14px;padding:13px;border:1.5px dashed #CBD5E1;border-radius:14px;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:#94A3B8;font-size:11px;font-weight:700;font-family:inherit">'+
+        ic('plus',15)+' 새 챕터 / 모듈 추가</button>'+
+    '</div>'+
+    '<div class="rmf">'+
+      '<button class="rmt" data-action="openlib">'+ic('plus',13)+' 학습 항목 추가</button>'+
+      '<button class="rmt">'+ic('rot',13)+' 기존 코스 링크</button></div>';
+}
+ 
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function setModalHTML(){
+  var title=S.setTitle;
+  return '<div class="ovl" data-action="closeset">'+
+    '<div class="mdl" style="width:460px" data-stop="1">'+
+      '<div class="mh">'+
+        '<div class="fl ac g8">'+ic('cog',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 요소 상세 설정</span></div>'+
+        '<button data-action="closeset" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'+
+      '<div class="mb">'+
+        '<div class="mb18"><div class="flbl" style="margin-bottom:3px">대상 항목</div>'+
+          '<div style="font-size:14px;font-weight:700">'+title+'</div></div>'+
+        '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px">이수 기준</div>'+
+        '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">진도율 기준</label>'+
+          '<div class="fl ac g8"><input type="number" value="100" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">% 이상</span></div></div>'+
+        '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">최소 학습 시간</label>'+
+          '<div class="fl ac g8"><input type="number" value="15" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분 이상</span></div></div>'+
+        '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">동영상 재생 제어</div>'+
+        '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
+          '<div style="font-size:13px;font-weight:600">스킵(건너뛰기) 방지</div>'+
+          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 영상을 임의로 앞으로 탐색하는 것을 차단합니다</div></div>'+
+          '<button class="tog on" onclick="this.classList.toggle(\'on\')"></button></div>'+
+        '<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'+
+          '<div style="font-size:13px;font-weight:600">배속 재생 허용</div>'+
+          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">최대 2.0x 배속 기능을 활성화합니다</div></div>'+
+          '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>'+
+      '</div>'+
+      '<div class="mf">'+
+        '<button data-action="closeset" class="btn bs2" style="padding:8px 16px;font-size:12px">취소</button>'+
+        '<button data-action="closeset" class="btn bp" style="padding:8px 16px;font-size:12px">저장</button></div>'+
+    '</div></div>';
+}
+ 
+function libModalHTML(){
+  var cats=[{id:'all',l:'전체 항목'},{id:'video',l:'동영상 (VOD)'},{id:'doc',l:'문서 (PDF)'},{id:'exam',l:'시험/퀴즈'},{id:'survey',l:'설문'}];
+  var sideBtns=cats.map(function(c){
+    return '<button class="lbc'+(S.libCat===c.id?' on':'')+'" data-action="setlibcat" data-val="'+c.id+'">'+c.l+'</button>';
+  }).join('');
+  var filtered=S.libCat==='all'?LIB:LIB.filter(function(i){return i.type===S.libCat;});
+  var items=filtered.length===0?
+    '<div class="emp">'+ic('info',26,'#CBD5E1')+'<p style="font-size:13px;color:#94A3B8">해당 카테고리에 등록된 항목이 없습니다</p></div>':
+    filtered.map(function(item){
+      var bg={video:'#DBEAFE',doc:'#F1F5F9',exam:'#EDE9FE',survey:'#FAE8FF'}[item.type]||'#F1F5F9';
+      var col={video:'#2563EB',doc:'#64748B',exam:'#7C3AED',survey:'#9333EA'}[item.type]||'#64748B';
+      var icn={video:'video',doc:'doc',exam:'list',survey:'list'}[item.type]||'doc';
+      return '<div class="lbi">'+
+        '<div style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+bg+';color:'+col+'">'+ic(icn,17)+'</div>'+
+        '<div class="f1">'+
+          '<div style="font-size:13px;font-weight:700">'+item.t+'</div>'+
+          '<div class="fl g10" style="font-size:11px;color:#94A3B8;margin-top:3px">'+
+            '<span style="text-transform:uppercase">'+item.type+'</span><span>'+item.time+'</span><span>'+item.date+'</span></div></div>'+
+        '<button style="padding:5px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#64748B;background:#fff;cursor:pointer;flex-shrink:0;font-family:inherit">추가</button>'+
+      '</div>';
+    }).join('');
+ 
+  return '<div class="ovl" data-action="closelib">'+
+    '<div class="mdl lbm" data-stop="1">'+
+      '<div class="mh">'+
+        '<div class="fl ac g8">'+ic('layers',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 항목 추가 — 콘텐츠 보관함</span></div>'+
+        '<button data-action="closelib" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'+
+      '<div class="lbs">'+
+        '<div class="lbsd">'+sideBtns+'</div>'+
+        '<div class="lbmn">'+
+          '<div class="fl g8 mb14">'+
+            '<div style="position:relative;flex:1">'+
+              '<div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex">'+ic('srch',13,'#94A3B8')+'</div>'+
+              '<input class="fld" style="padding-left:34px" placeholder="보관함 내 학습 항목 검색..."></div>'+
+            '<button class="btn bp" style="padding:9px 14px;font-size:12px">검색</button></div>'+
+          '<div class="lbl">'+items+'</div>'+
+          '<div class="fl sb ac" style="margin-top:14px;padding-top:14px;border-top:1px solid #F1F5F9">'+
+            '<span style="font-size:12px;color:#94A3B8">원하는 항목이 없나요?</span>'+
+            '<button style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#334155;cursor:pointer;font-family:inherit">'+ic('up',12)+' PC에서 파일 업로드</button></div>'+
+        '</div></div></div></div>';
+}
+ 
+// ─── EVENT DELEGATION ─────────────────────────────────────────────────────────
+function bind(){
+  document.getElementById('app').addEventListener('click',function(e){
+    var el=e.target;
+    // walk up to find data-action
+    while(el&&el.id!=='app'){
+      if(el.dataset&&el.dataset.stop){e.stopPropagation();return;}
+      if(el.dataset&&el.dataset.action){
+        var a=el.dataset.action;
+        if(a==='seltype'){upd({ctype:el.dataset.val,view:'editor'});return;}
+        if(a==='goback'){upd({view:'selection',ctype:null,rule:'single',sessions:[{id:1,date:'',st:'',et:'',place:'',cap:30},{id:2,date:'',st:'',et:'',place:'',cap:30}],mods:[]});return;}
+        if(a==='tog'){var t2=Object.assign({},S.tog);t2[el.dataset.key]=!t2[el.dataset.key];upd({tog:t2});return;}
+        if(a==='setrule'){upd({rule:el.dataset.val});return;}
+        if(a==='togday'){var d=el.dataset.val;var arr=S.days.slice();var i=arr.indexOf(d);if(i>=0)arr.splice(i,1);else arr.push(d);upd({days:arr});return;}
+        if(a==='batch'){upd({sessions:[{id:201,date:'2026-03-02',st:'22:00',et:'23:00',place:'',cap:30},{id:202,date:'2026-03-04',st:'22:00',et:'23:00',place:'',cap:30},{id:203,date:'2026-03-06',st:'22:00',et:'23:00',place:'',cap:30},{id:204,date:'2026-03-09',st:'22:00',et:'23:00',place:'',cap:30}]});return;}
+        if(a==='addsess'){var ss=S.sessions.slice();ss.push({id:Date.now(),date:'',st:'',et:'',place:'',cap:30});upd({sessions:ss});return;}
+        if(a==='remsess'){upd({sessions:S.sessions.filter(function(s){return s.id!==parseInt(el.dataset.sid);})});return;}
+        if(a==='addmod'){var ms=S.mods.slice();var mn=(S.ctype==='blended'?3:2)+ms.length;ms.push({id:Date.now(),title:'새 챕터 '+mn});upd({mods:ms});return;}
+        if(a==='removemod'){upd({mods:S.mods.filter(function(m){return m.id!==parseInt(el.dataset.mid);})});return;}
+        if(a==='toblended'){upd({ctype:'blended'});return;}
+        if(a==='openlib'){upd({libOpen:true});return;}
+        if(a==='closelib'){upd({libOpen:false});return;}
+        if(a==='setlibcat'){upd({libCat:el.dataset.val});return;}
+        if(a==='opensettings'){upd({setOpen:true,setTitle:el.dataset.title||''});return;}
+        if(a==='closeset'){upd({setOpen:false,setTitle:''});return;}
+        if(a==='reqtog'){el.classList.toggle('rqr');el.classList.toggle('rqo');el.textContent=el.classList.contains('rqr')?'필수':'선택';return;}
+        return;
       }
-      return (
-        <div className="flex items-center gap-2 mb-4">
-          {badge && <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass}`}>{badge}</span>}
-          <h3 className="text-[15px] font-bold text-slate-800">{num}. {title}</h3>
-        </div>
-      );
-    };
-
-    const Toggle = ({ active }) => (
-      <div className={`w-[38px] h-[22px] rounded-full relative cursor-pointer transition-colors ${active ? 'bg-[#5c66f2]' : 'bg-slate-300'}`}>
-        <div className={`w-[18px] h-[18px] bg-white rounded-full absolute top-[2px] transition-all ${active ? 'left-[18px]' : 'left-[2px]'}`}></div>
-      </div>
-    );
-
-    const ItemRequiredToggle = ({ initial = true, onToggle }) => {
-      const [isRequired, setIsRequired] = useState(initial);
-      const handleToggle = (e) => {
-        e.stopPropagation();
-        const newState = !isRequired;
-        setIsRequired(newState);
-        if(onToggle) onToggle(newState);
-      };
-      return (
-        <button
-          onClick={handleToggle}
-          className={`text-[10px] font-bold px-2 py-1 rounded-[4px] transition-all shrink-0 min-w-[36px] text-center ${
-            isRequired
-              ? 'bg-[#eef0ff] text-[#5c66f2] hover:bg-[#e0e4ff] border border-[#d6dbff]'
-              : 'bg-slate-50 text-slate-400 hover:bg-slate-100 border border-slate-200'
-          }`}
-          title="필수 이수 여부 토글"
-        >
-          {isRequired ? '필수' : '선택'}
-        </button>
-      );
-    };
-
-    // --- Main App ---
-    const App = () => {
-      const [viewMode, setViewMode] = useState('selection');
-      const [courseType, setCourseType] = useState(null);
-      const [isLibraryModalOpen, setLibraryModalOpen] = useState(false);
-      const [editingItem, setEditingItem] = useState(null);
-      const [reqStates, setReqStates] = useState({ item1: true, item2: false, item3: true });
-      
-      const [sessionRule, setSessionRule] = useState('single');
-      const [customModules, setCustomModules] = useState([]);
-      const [libraryCategory, setLibraryCategory] = useState('all');
-
-      // 오프라인 회차 일괄 생성 폼 상태
-      const [selectedDays, setSelectedDays] = useState(['월', '수', '금']);
-      const toggleDay = (day) => {
-        setSelectedDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
-      };
-
-      // 오프라인 회차 상태 연동
-      const [sessions, setSessions] = useState([
-        { id: 1, date: '', startTime: '', endTime: '', place: '', duration: 60, capacity: 30 },
-        { id: 2, date: '', startTime: '', endTime: '', place: '', duration: 60, capacity: 30 },
-        { id: 3, date: '', startTime: '', endTime: '', place: '', duration: 60, capacity: 30 }
-      ]);
-
-      const handleAddSession = () => {
-        setSessions([...sessions, { id: Date.now(), date: '', startTime: '', endTime: '', place: '', duration: 60, capacity: 30 }]);
-      };
-
-      const handleRemoveSession = (id) => {
-        setSessions(sessions.filter(s => s.id !== id));
-      };
-
-      const handleSessionChange = (id, field, value) => {
-        setSessions(sessions.map(s => s.id === id ? { ...s, [field]: value } : s));
-      };
-
-      const handleBatchGenerate = () => {
-        // 일괄 생성 시뮬레이션 (목업 데이터)
-        setSessions([
-          { id: 101, date: '2026-03-02', startTime: '22:00', endTime: '23:00', place: '', duration: 60, capacity: 30 },
-          { id: 102, date: '2026-03-04', startTime: '22:00', endTime: '23:00', place: '', duration: 60, capacity: 30 },
-          { id: 103, date: '2026-03-06', startTime: '22:00', endTime: '23:00', place: '', duration: 60, capacity: 30 },
-        ]);
-      };
-
-      // 모달에 표시될 목업 데이터
-      const mockLibraryItems = [
-        { title: '2025년 기업문화 핵심가치 내재화 특강', type: 'video', time: '45:20', date: '2026.01.15' },
-        { title: '신규 입사자 시스템 가이드(기본편)', type: 'document', time: '-', date: '2025.11.20' },
-        { title: '직장 내 성희롱 예방 교육 (법정의무)', type: 'video', time: '60:00', date: '2025.10.05' },
-        { title: '2025 상반기 임직원 만족도 설문', type: 'survey', time: '-', date: '2025.09.12' },
-        { title: '신입사원 OJT 최종 평가', type: 'exam', time: '문항 20개', date: '2026.02.10' },
-        { title: '보안 인식 중간 점검', type: 'exam', time: '문항 10개', date: '2026.01.05' },
-      ];
-
-      const filteredLibraryItems = libraryCategory === 'all' 
-        ? mockLibraryItems 
-        : mockLibraryItems.filter(item => item.type === libraryCategory);
-
-      if (viewMode === 'selection') {
-        return (
-          <div className="min-h-screen flex items-center justify-center p-6 animate-fadeIn bg-slate-100">
-            <div className="max-w-4xl w-full">
-              <h1 className="text-3xl font-bold text-center mb-10 text-slate-900 font-sans tracking-tight">새 코스 등록 유형 선택</h1>
-              <div className="grid grid-cols-3 gap-6">
-                {[
-                  { id: 'online', title: '온라인 코스', icon: <Video />, color: 'blue', desc: '비대면 전용 학습 과정' },
-                  { id: 'offline', title: '오프라인 코스', icon: <MapPin />, color: 'red', desc: '집합 교육 및 출석 중심' },
-                  { id: 'blended', title: '블렌디드 코스', icon: <Layers />, color: 'indigo', desc: '온/오프라인 통합 하이브리드' }
-                ].map(type => (
-                  <div key={type.id} onClick={() => {setCourseType(type.id); setViewMode('editor');}} className="bg-white border border-slate-200 rounded-2xl p-8 cursor-pointer hover:border-[#5c66f2] hover:shadow-xl transition-all text-center group">
-                    <div className="w-16 h-16 mx-auto bg-slate-50 text-slate-400 group-hover:bg-[#5c66f2] group-hover:text-white rounded-2xl flex items-center justify-center mb-6 transition-all">
-                      {type.icon}
-                    </div>
-                    <h3 className="text-xl font-bold mb-3">{type.title}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed">{type.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <div className="h-screen flex flex-col animate-fadeIn">
-          {/* Header */}
-          <header className="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center z-30 shadow-sm">
-            <div className="flex items-center gap-4">
-              <button onClick={() => setViewMode('selection')} className="text-slate-400 hover:text-slate-600 transition-colors"><X size={20} /></button>
-              <div className="h-4 w-px bg-slate-200"></div>
-              <h2 className="font-bold text-[16px] text-slate-800 flex items-center gap-2">
-                코스 등록 <ChevronRight size={14} className="text-slate-300"/> 
-                <span className="text-[#5c66f2]">{courseType.toUpperCase()} COURSE</span>
-              </h2>
-            </div>
-            <div className="flex gap-2">
-              <button className="px-5 py-2 border border-slate-300 rounded font-bold text-xs hover:bg-slate-50">임시저장</button>
-              <button className="px-5 py-2 bg-[#5c66f2] text-white rounded font-bold text-xs hover:bg-[#4a54e1] shadow-sm">등록 완료</button>
-            </div>
-          </header>
-
-          <main className="flex-1 flex overflow-hidden">
-            {/* Left Panel: Settings & Meta */}
-            <section className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] p-8">
-              <div className="max-w-[800px] mx-auto space-y-6 pb-20">
-                
-                {/* 1. 코스 기본 정보 (이미지 반영) */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7">
-                  <h3 className="text-[16px] font-bold text-slate-800 mb-6">코스 기본 정보</h3>
-                  <div className="space-y-7">
-                    <div className="flex items-center gap-4">
-                      <label className="w-20 text-[13px] text-slate-500">코스 분류</label>
-                      <button className="px-4 py-2 bg-[#5c66f2] text-white rounded text-[12px] font-bold flex items-center gap-1 hover:bg-[#4a54e1] transition-colors shadow-sm">
-                        <Plus size={14}/> 분류 선택
-                      </button>
-                    </div>
-                    <div className="relative mt-2">
-                      <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] text-[#5c66f2] font-bold z-10">코스명</label>
-                      <input type="text" className="w-full border-[1.5px] border-[#5c66f2] rounded-md p-3 text-[14px] outline-none text-slate-800 font-medium" defaultValue="2021년 3월 위클리 터치메이트" />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] text-slate-400 font-bold z-10">코스 소개</label>
-                      <input type="text" className="w-full border border-slate-300 rounded-md p-3 text-[14px] outline-none text-slate-800" placeholder="코스 소개" />
-                    </div>
-                    <div className="flex items-center gap-6 pt-4 border-t border-slate-100">
-                      <label className="text-[13px] text-slate-500 flex items-center gap-1 w-24">
-                        코스 상세 상단 <Info size={14} className="text-[#5c66f2] cursor-pointer"/>
-                      </label>
-                      <div className="flex items-center gap-10">
-                        <div className="flex items-center gap-3">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <div className="w-[18px] h-[18px] rounded-full border-[5px] border-[#5c66f2] bg-white flex items-center justify-center"></div>
-                            <span className="text-[13px] font-bold text-slate-800">기본(표지)</span>
-                          </label>
-                          <div className="w-[46px] h-[64px] bg-[#f8fafc] border border-slate-200 rounded-md relative flex flex-col items-center p-1.5 shadow-sm">
-                             <div className="w-full h-8 bg-slate-300 rounded-sm mb-1.5 flex items-center justify-center">
-                               <ImageIcon size={12} className="text-white" />
-                             </div>
-                             <div className="w-full h-1.5 bg-slate-200 rounded-[1px] mb-1"></div>
-                             <div className="w-5 h-1.5 bg-slate-200 rounded-[1px]"></div>
-                             <div className="absolute top-1 right-1 text-[8px] text-slate-400 font-bold leading-none">×</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <label className="flex items-center gap-2 cursor-pointer group">
-                            <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 bg-white group-hover:border-slate-400"></div>
-                            <span className="text-[13px] text-slate-600">이미지(최대5장)</span>
-                          </label>
-                          <div className="w-[64px] h-[46px] bg-[#f8fafc] border border-slate-200 rounded-md relative flex items-center justify-center shadow-sm">
-                             <div className="w-12 h-8 bg-slate-200 rounded-sm flex items-center justify-center">
-                               <ImageIcon size={12} className="text-slate-400" />
-                             </div>
-                             <div className="absolute top-1 right-1 text-[8px] text-slate-400 font-bold leading-none">×</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. 수강 등록 방식 (이미지 반영) */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7">
-                  <h3 className="text-[16px] font-bold text-slate-800 mb-4">수강 등록 방식</h3>
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center py-3 border-b border-slate-50">
-                      <div>
-                        <div className="text-[14px] font-bold text-slate-800">회원이 신청</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">사용 안 함</div>
-                      </div>
-                      <Toggle active={false} />
-                    </div>
-                    <div className="flex justify-between items-center py-3">
-                      <div>
-                        <div className="text-[14px] font-bold text-slate-800">관리자가 등록</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">사용 안 함</div>
-                      </div>
-                      <Toggle active={false} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 3. 수강 기간 지정 (이미지 반영) */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7">
-                  <h3 className="text-[16px] font-bold text-slate-800 mb-6">수강 기간 지정</h3>
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <div className="pt-2">
-                        <div className="w-[18px] h-[18px] rounded-full border-[5px] border-[#5c66f2] bg-white flex items-center justify-center cursor-pointer"></div>
-                      </div>
-                      <div className="flex-1 flex items-center gap-3">
-                        <div className="relative flex-1 max-w-[200px]">
-                          <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] text-slate-400 font-bold z-10">시작일</label>
-                          <input type="datetime-local" className="w-full border border-[#5c66f2] rounded p-2.5 text-[14px] outline-none text-slate-700" defaultValue="2022-04-29T12:00" />
-                        </div>
-                        <span className="text-slate-400 font-medium">~</span>
-                        <div className="relative flex-1 max-w-[200px]">
-                          <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] text-slate-400 font-bold z-10">종료일</label>
-                          <input type="datetime-local" className="w-full border border-slate-300 rounded p-2.5 text-[14px] outline-none text-slate-700 focus:border-[#5c66f2]" defaultValue="2022-04-29T23:59" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 cursor-pointer group">
-                      <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 bg-white group-hover:border-slate-400"></div>
-                      <div className="flex items-center gap-2 text-[14px] text-slate-600">
-                        <span>수강 시작일로부터</span>
-                        <input type="number" className="w-24 border border-slate-300 rounded p-2 text-center outline-none focus:border-[#5c66f2]" placeholder="일수" />
-                        <span>일간</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 cursor-pointer group">
-                      <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 bg-white group-hover:border-slate-400"></div>
-                      <span className="text-[14px] text-slate-600">제한 없음</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 4. 수강 시간 제한 (이미지 반영) */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7 flex justify-between items-center">
-                  <div>
-                    <h3 className="text-[16px] font-bold text-slate-800">수강 시간 제한</h3>
-                    <p className="text-[12px] text-slate-400 mt-1">사용 안 함</p>
-                  </div>
-                  <Toggle active={false} />
-                </div>
-
-                {/* 5. 오프라인 운영 및 출결 정책 */}
-                {(courseType === 'offline' || courseType === 'blended') && (
-                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7">
-                    <SectionTitle num="5" title="오프라인 운영 및 출결 정책" badge="오프라인 특화" />
-                    
-                    <div className="grid grid-cols-2 gap-8 mb-6">
-                      <div className="space-y-1.5">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase">담당 강사 *</label>
-                        <input type="text" className="w-full border border-slate-200 rounded p-2.5 text-[13px] outline-none focus:border-[#5c66f2] transition-colors" placeholder="강사명 입력" />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase">기본 교육 장소 *</label>
-                        <input type="text" className="w-full border border-slate-200 rounded p-2.5 text-[13px] outline-none focus:border-[#5c66f2] transition-colors" placeholder="예) 상암사옥 2층 제1교육장" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-4 pt-4 border-t border-slate-100">
-                      <div className="flex justify-between items-center py-2">
-                        <div>
-                          <div className="text-[13px] font-semibold text-slate-800 flex items-center gap-1">QR 코드 출석 관리 연동 <QrCode size={14} className="text-slate-400"/></div>
-                          <div className="text-[11px] text-slate-500 mt-1">생성된 각 회차별로 현장 출석용 고유 QR 코드를 발급하여 시스템과 실시간 연동합니다.</div>
-                        </div>
-                        <Toggle active={true} />
-                      </div>
-                      <div className="flex justify-between items-center py-2">
-                        <div>
-                          <div className="text-[13px] font-semibold text-slate-800">관리자 수기 출석 처리 허용</div>
-                          <div className="text-[11px] text-slate-500 mt-1">앱 미설치 등 예외 상황 발생 시, 명단에서 관리자가 직접 수기 출석을 처리합니다.</div>
-                        </div>
-                        <Toggle active={true} />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 6. 오프라인 세션 설정 */}
-                {(courseType === 'offline' || courseType === 'blended') && (
-                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7">
-                    <SectionTitle num="6" title="수강 신청 방식 및 회차(세션) 구성" badge="오프라인 핵심" />
-                    
-                    <div className="mb-6">
-                      <div className="text-[13px] font-bold text-slate-800 mb-3">학습자 수강(이수) 규칙 설정</div>
-                      <div className="grid grid-cols-3 gap-4">
-                        {/* Card 1: 단일 회차 선택형 */}
-                        <div onClick={() => setSessionRule('single')} className={`relative border rounded-xl p-5 cursor-pointer transition-all flex flex-col h-full ${sessionRule === 'single' ? 'border-[#5c66f2] bg-[#f8f9ff] ring-1 ring-[#5c66f2]' : 'border-slate-200 hover:border-blue-300'}`}>
-                          <div className="absolute top-5 right-5">
-                            <div className={`w-4 h-4 rounded-full border-[4px] ${sessionRule === 'single' ? 'border-[#5c66f2] bg-white' : 'border-slate-300'}`}></div>
-                          </div>
-                          <div className={`w-8 h-8 rounded text-white flex items-center justify-center text-[14px] font-bold mb-3 ${sessionRule === 'single' ? 'bg-[#5c66f2]' : 'bg-slate-200 text-slate-500'}`}>1</div>
-                          <h4 className={`font-bold text-[13px] mb-1.5 ${sessionRule === 'single' ? 'text-[#5c66f2]' : 'text-slate-700'}`}>단일 회차 선택형</h4>
-                          <p className="text-[11px] text-slate-500 leading-relaxed flex-1">학습자는 개설된 여러 회차 중 단 1개의 일정만 선택하여 수강합니다.</p>
-                        </div>
-                        
-                        {/* Card 2: 복수 회차 선택형 */}
-                        <div onClick={() => setSessionRule('multiple')} className={`relative border rounded-xl p-5 cursor-pointer transition-all flex flex-col h-full ${sessionRule === 'multiple' ? 'border-[#5c66f2] bg-[#f8f9ff] ring-1 ring-[#5c66f2]' : 'border-slate-200 hover:border-blue-300'}`}>
-                          <div className="absolute top-5 right-5">
-                            <div className={`w-4 h-4 rounded-full border-[4px] ${sessionRule === 'multiple' ? 'border-[#5c66f2] bg-white' : 'border-slate-300'}`}></div>
-                          </div>
-                          <div className={`w-8 h-8 rounded flex items-center justify-center text-[14px] font-bold mb-3 ${sessionRule === 'multiple' ? 'bg-[#5c66f2] text-white' : 'bg-slate-100 text-slate-400'}`}>
-                            <List size={16} />
-                          </div>
-                          <h4 className={`font-bold text-[13px] mb-1.5 ${sessionRule === 'multiple' ? 'text-[#5c66f2]' : 'text-slate-700'}`}>복수 회차 선택형</h4>
-                          <p className="text-[11px] text-slate-500 leading-relaxed mb-4 flex-1">학습자는 개설된 전체 회차 중 지정된 개수의 일정을 조합하여 수강합니다.</p>
-                          {/* 필수 수강 수 입력 폼 */}
-                          {sessionRule === 'multiple' && (
-                            <div className="flex items-center gap-2 text-[12px] font-bold text-slate-700 bg-white p-2 rounded-md border border-blue-100 mt-auto shadow-sm">
-                              필수 수강 수: 
-                              <input type="number" defaultValue="3" className="w-12 border border-slate-200 rounded p-1 text-center outline-none focus:border-[#5c66f2]" onClick={e => e.stopPropagation()} /> 개
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Card 3: 전체 회차 필수형 */}
-                        <div onClick={() => setSessionRule('all')} className={`relative border rounded-xl p-5 cursor-pointer transition-all flex flex-col h-full ${sessionRule === 'all' ? 'border-[#5c66f2] bg-[#f8f9ff] ring-1 ring-[#5c66f2]' : 'border-slate-200 hover:border-blue-300'}`}>
-                          <div className="absolute top-5 right-5">
-                            <div className={`w-4 h-4 rounded-full border-[4px] ${sessionRule === 'all' ? 'border-[#5c66f2] bg-white' : 'border-slate-300'}`}></div>
-                          </div>
-                          <div className={`w-8 h-8 rounded flex items-center justify-center text-[14px] font-bold mb-3 ${sessionRule === 'all' ? 'bg-[#5c66f2] text-white' : 'bg-slate-100 text-slate-400'}`}>
-                            <CalendarDays size={16} />
-                          </div>
-                          <h4 className={`font-bold text-[13px] mb-1.5 ${sessionRule === 'all' ? 'text-[#5c66f2]' : 'text-slate-700'}`}>전체 회차 필수형</h4>
-                          <p className="text-[11px] text-slate-500 leading-relaxed flex-1">학습자는 코스 신청 시 하위 개설된 모든 회차에 일괄 자동 등록됩니다. (예: 정기 기수반)</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* --- 분기: 전체 회차 필수형 (All) UI --- */}
-                    {sessionRule === 'all' ? (
-                      <div className="animate-fadeIn">
-                        <div className="bg-[#f0f4ff] border border-[#d6dbff] p-4 rounded-lg text-[13px] text-[#5c66f2] flex items-center gap-2 mb-4 font-semibold">
-                          <Zap size={16} fill="currentColor" className="shrink-0" />
-                          전체 필수형 특화 기능: 정기적으로 반복되는 일정을 요일 기반으로 일괄 생성합니다. (예: 3월 매주 월요일 과정)
-                        </div>
-
-                        <div className="border border-slate-200 rounded-lg p-6 bg-white space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                          <div className="grid grid-cols-2 gap-8">
-                            <div>
-                              <label className="block text-[12px] font-bold text-slate-700 mb-2">진행 기간 (시작일 ~ 종료일)</label>
-                              <div className="flex items-center gap-2">
-                                <input type="date" className="flex-1 border border-slate-300 rounded p-2 text-[13px] outline-none focus:border-[#5c66f2]" defaultValue="2026-03-01" />
-                                <span className="text-slate-400 font-medium">~</span>
-                                <input type="date" className="flex-1 border border-slate-300 rounded p-2 text-[13px] outline-none focus:border-[#5c66f2]" defaultValue="2026-03-31" />
-                              </div>
-                            </div>
-                            <div>
-                              <label className="block text-[12px] font-bold text-slate-700 mb-2">반복 요일 선택</label>
-                              <div className="flex items-center gap-1.5">
-                                {['일', '월', '화', '수', '목', '금', '토'].map(day => (
-                                  <button
-                                    key={day}
-                                    onClick={() => toggleDay(day)}
-                                    className={`w-9 h-9 rounded-full text-[13px] font-bold transition-colors shadow-sm border ${
-                                      selectedDays.includes(day) 
-                                      ? 'bg-[#5c66f2] text-white border-[#5c66f2]' 
-                                      : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
-                                    }`}
-                                  >
-                                    {day}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-6">
-                            <div>
-                              <label className="block text-[12px] font-bold text-slate-700 mb-2">공통 진행 시간</label>
-                              <div className="flex items-center gap-2">
-                                <input type="time" className="flex-1 border border-slate-300 rounded p-2 text-[13px] outline-none focus:border-[#5c66f2]" defaultValue="22:00" />
-                                <span className="text-slate-400 font-medium">~</span>
-                                <input type="time" className="flex-1 border border-slate-300 rounded p-2 text-[13px] outline-none focus:border-[#5c66f2]" defaultValue="23:00" />
-                              </div>
-                            </div>
-                            <div>
-                              <label className="block text-[12px] font-bold text-slate-700 mb-2">공통 정원(명)</label>
-                              <input type="number" className="w-full border border-slate-300 rounded p-2 text-[13px] outline-none focus:border-[#5c66f2]" defaultValue={30} />
-                            </div>
-                            <div>
-                              <label className="block text-[12px] font-bold text-slate-700 mb-2">공통 그룹 제한</label>
-                              <input type="text" className="w-full border border-slate-300 rounded p-2 text-[13px] outline-none focus:border-[#5c66f2]" placeholder="제한 없음" />
-                            </div>
-                          </div>
-
-                          <button onClick={handleBatchGenerate} className="w-full py-3 bg-[#111827] text-white rounded-lg font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-black transition-colors shadow-md">
-                            <Wand2 size={16} /> 설정한 규칙으로 전체 회차 일괄 생성
-                          </button>
-                        </div>
-
-                        <div className="mt-8">
-                          <div className="text-[12px] text-slate-500 mb-3">생성된 회차 리스트 (일괄 생성 시 하단에 표출됩니다)</div>
-                          <div className="border border-slate-200 rounded-lg overflow-x-auto bg-white shadow-sm">
-                            <table className="w-full text-[12px] min-w-[700px] text-slate-600">
-                              <thead className="bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                  <th className="py-4 px-3 font-normal text-left w-14 text-slate-500">회차</th>
-                                  <th className="py-4 px-2 font-normal text-left text-slate-500">교육 일자</th>
-                                  <th className="py-4 px-2 font-normal text-left text-slate-500">교육 시간</th>
-                                  <th className="py-4 px-2 font-normal text-left text-slate-500">장소</th>
-                                  <th className="py-4 px-2 font-normal text-center w-20 text-slate-500">정원(명)</th>
-                                  <th className="py-4 px-2 font-normal text-center w-20 text-slate-500">그룹 제한</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {/* 목업 데이터가 생성되었는지 확인 후 렌더링 */}
-                                {sessions.length > 0 && sessions[0].id > 100 ? (
-                                  sessions.map((s, i) => (
-                                    <tr key={s.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors animate-fadeIn">
-                                      <td className="py-3 px-3 font-bold text-slate-800">{i + 1}회차</td>
-                                      <td className="py-3 px-2 font-medium">{s.date}</td>
-                                      <td className="py-3 px-2 text-slate-500">{s.startTime} ~ {s.endTime}</td>
-                                      <td className="py-3 px-2 text-slate-500">{s.place || '기본 장소'}</td>
-                                      <td className="py-3 px-2 text-center font-medium">{s.capacity}</td>
-                                      <td className="py-3 px-2 text-center text-slate-400">-</td>
-                                    </tr>
-                                  ))
-                                ) : (
-                                  <tr>
-                                    <td colSpan="6" className="py-12 text-center text-[12px] text-slate-400 bg-slate-50/50">
-                                      조건을 설정하고 일괄 생성 버튼을 눌러주세요.
-                                    </td>
-                                  </tr>
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      /* --- 분기: 단일/복수 회차 선택형 (Single/Multiple) UI --- */
-                      <div className="animate-fadeIn">
-                        <div className="bg-[#f0f4ff] border border-[#d6dbff] p-4 rounded-lg text-[13px] text-[#5c66f2] flex items-center gap-3 mb-6">
-                          <Info size={18} className="shrink-0 text-[#5c66f2]" />
-                          <div>
-                            {sessionRule === 'single' ? '학습자가 단 1개만 고를 수 있도록 선택지(일정)를 하나씩 추가해주세요.' : '하단에 생성된 전체 회차 중, 학습자가 조합하여 선택할 수 있는 풀(Pool)을 구성해주세요.'}
-                          </div>
-                        </div>
-
-                        <div className="text-[13px] font-bold text-slate-800 mb-4">선택지(회차) 생성 및 정원 할당</div>
-                        
-                        <div className="border border-slate-200 rounded-lg overflow-x-auto bg-white">
-                          <table className="w-full text-[12px] min-w-[700px] text-slate-600">
-                            <thead className="bg-slate-50 border-b border-slate-200">
-                              <tr>
-                                <th className="py-4 px-3 font-normal text-center w-14 text-slate-500">선택</th>
-                                <th className="py-4 px-2 font-normal text-left text-slate-500">교육 일자</th>
-                                <th className="py-4 px-2 font-normal text-left text-slate-500">교육 시간</th>
-                                <th className="py-4 px-2 font-normal text-left text-slate-500">장소 (선택)</th>
-                                <th className="py-4 px-2 font-normal text-center w-20 text-slate-500">정원(명)</th>
-                                <th className="py-4 px-2 font-normal text-center w-16 text-slate-500 leading-tight">그룹<br/>제한</th>
-                                <th className="py-4 px-2 font-normal text-center w-10"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {sessions.map((session, index) => (
-                                <tr key={session.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
-                                  <td className="py-4 px-3 font-bold text-slate-900 text-center text-[14px] leading-tight">{index + 1}</td>
-                                  <td className="py-4 px-2">
-                                    <input type="date" value={session.date} onChange={(e) => handleSessionChange(session.id, 'date', e.target.value)} className="w-full border border-slate-200 rounded px-2 py-2 text-[13px] outline-none focus:border-[#5c66f2] text-slate-700 bg-white" />
-                                  </td>
-                                  <td className="py-4 px-2">
-                                    <div className="flex items-center gap-1.5 min-w-[180px]">
-                                      <input type="time" value={session.startTime} onChange={(e) => handleSessionChange(session.id, 'startTime', e.target.value)} className="w-full border border-slate-200 rounded px-2 py-2 text-[13px] outline-none focus:border-[#5c66f2] text-slate-700 bg-white" />
-                                      <span className="text-slate-400">-</span>
-                                      <input type="time" value={session.endTime} onChange={(e) => handleSessionChange(session.id, 'endTime', e.target.value)} className="w-full border border-slate-200 rounded px-2 py-2 text-[13px] outline-none focus:border-[#5c66f2] text-slate-700 bg-white" />
-                                    </div>
-                                  </td>
-                                  <td className="py-4 px-2">
-                                    <input type="text" value={session.place} onChange={(e) => handleSessionChange(session.id, 'place', e.target.value)} placeholder="기본 장소" className="w-full min-w-[100px] border border-slate-200 rounded px-2 py-2 text-[13px] outline-none focus:border-[#5c66f2] text-slate-700 bg-white" />
-                                  </td>
-                                  <td className="py-4 px-2 text-center">
-                                    <input type="number" value={session.capacity} onChange={(e) => handleSessionChange(session.id, 'capacity', parseInt(e.target.value))} className="w-16 border border-slate-200 rounded px-1 py-2 text-[13px] text-center outline-none focus:border-[#5c66f2] text-slate-700 mx-auto block bg-white" />
-                                  </td>
-                                  <td className="py-4 px-2 text-center">
-                                    <button className="w-8 h-8 border border-slate-200 rounded bg-white hover:bg-slate-50 transition-colors mx-auto focus:border-[#5c66f2] outline-none"></button>
-                                  </td>
-                                  <td className="py-4 px-2 text-center">
-                                    <button onClick={() => handleRemoveSession(session.id)} className="text-slate-400 hover:text-red-500 transition-colors focus:outline-none"><Trash2 size={16} className="mx-auto" /></button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                          <button onClick={handleAddSession} className="w-full py-3.5 bg-white hover:bg-slate-50 border-t border-slate-200 text-slate-500 text-[13px] font-bold transition-colors flex items-center justify-center gap-2">
-                            <Plus size={16}/> 선택 일정(회차) 추가하기
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* 7. 코스 상세 옵션 */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-7">
-                  <h3 className="text-[16px] font-bold text-slate-800 mb-5">코스 상세 옵션</h3>
-                  <div className="grid grid-cols-1 gap-y-1 divide-y divide-slate-50">
-                    <div className="flex justify-between items-center py-3">
-                      <div>
-                        <div className="text-[14px] font-bold text-slate-800">수강 시간 확인을 위한 자리 비움 모니터링</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">모니터링 안 함</div>
-                      </div>
-                      <Toggle active={false} />
-                    </div>
-                    <div className="flex justify-between items-center py-3">
-                      <div>
-                        <div className="text-[14px] font-bold text-slate-800">커리큘럼별 공개일 설정</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">수강 시작 시 모든 커리큘럼 공개</div>
-                      </div>
-                      <Toggle active={false} />
-                    </div>
-                    <div className="flex justify-between items-center py-3">
-                      <div>
-                        <div className="text-[14px] font-bold text-slate-800">페이지 순서대로 수강하기</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">수강 순서 자유</div>
-                      </div>
-                      <Toggle active={false} />
-                    </div>
-                    <div className="flex justify-between items-center py-3">
-                      <div>
-                        <div className="text-[14px] font-bold text-slate-800">수강 전 코스 정보 보기</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">코스 목록 → 수강</div>
-                      </div>
-                      <Toggle active={false} />
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </section>
-
-            {/* Right Panel: Curriculum Indexing */}
-            <aside className="w-[380px] bg-white border-l border-slate-200 flex flex-col z-20 shadow-[-10px_0_20px_-10px_rgba(0,0,0,0.05)]">
-              <div className="p-5 border-b border-slate-100 bg-[#fbfcfd] flex justify-between items-center">
-                <h3 className="font-bold text-slate-900 text-[14px] flex items-center gap-2">커리큘럼 로드맵</h3>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Roadmap Index</span>
-              </div>
-
-              {/* 분기: 순수 오프라인 코스일 경우 자동 구성 모드 노출 */}
-              {courseType === 'offline' ? (
-                <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
-                  <div className="p-5">
-                    <div className="bg-red-50 border border-red-100 rounded-xl p-5 mb-8 text-center shadow-sm">
-                      <div className="w-12 h-12 bg-white text-red-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
-                        <MapPin size={24} />
-                      </div>
-                      <h4 className="font-bold text-slate-800 text-[14px] mb-2">순수 오프라인 자동 커리큘럼</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed mb-4">
-                        순수 오프라인 코스는 별도의 목차 조립 없이<br/>좌측에서 설정한 <strong>회차 데이터가 로드맵으로 자동 구성</strong>됩니다.
-                      </p>
-                      <div className="pt-4 border-t border-red-200/50">
-                        <p className="text-[10px] text-slate-400 mb-2">온라인 사전/사후 학습(VOD, 문서 등)을 추가하시겠습니까?</p>
-                        <button 
-                          onClick={() => setCourseType('blended')}
-                          className="w-full py-2 bg-white border border-[#5c66f2] text-[#5c66f2] rounded-lg text-[12px] font-bold hover:bg-blue-50 transition-colors"
-                        >
-                          블렌디드 코스로 전환하기
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex-1">
-                      {/* 타임라인 UI 적용 */}
-                      <div className="relative">
-                        <div className="flex items-center gap-3 mb-4 group">
-                          <div className="w-6 h-6 bg-slate-900 text-white rounded text-[10px] font-bold flex items-center justify-center shrink-0">01</div>
-                          <h4 className="text-[13px] font-bold text-slate-900 truncate flex-1">현장 교육 참석 및 출석 체크</h4>
-                          <span className="text-[10px] text-[#5c66f2] bg-blue-50 px-2 py-0.5 rounded-full font-bold">{sessions.length} Sessions</span>
-                        </div>
-
-                        <div className="ml-3 pl-6 border-l-2 border-slate-100 space-y-4 relative pb-4">
-                          {sessions.length > 0 && (sessions[0].id < 100 || sessionRule === 'all') ? sessions.map((session, index) => (
-                            <div key={session.id} className="relative group cursor-default animate-fadeIn">
-                              <div className="absolute -left-[31px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white border-2 border-green-400 rounded-full z-10"></div>
-                              <div className="bg-white border border-slate-200 p-3.5 rounded-lg hover:border-green-300 transition-all shadow-[0_2px_4px_rgba(0,0,0,0.02)]">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 bg-green-50 text-green-600 rounded flex items-center justify-center shrink-0">
-                                    <MapPin size={16} />
-                                  </div>
-                                  <div className="flex-1 overflow-hidden">
-                                    <div className="text-[12px] font-bold text-slate-800">
-                                      {sessionRule === 'single' ? `선택 옵션 ${index + 1}` : `회차 ${index + 1}`} : 오프라인 교육 참석
-                                    </div>
-                                    <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-2 uppercase tracking-tighter">
-                                      <span>{session.date ? `${session.date} ${session.startTime}~${session.endTime}` : '일정 미입력'}</span>
-                                      {session.place && (
-                                        <>
-                                          <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                                          <span>{session.place}</span>
-                                        </>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <span className={`text-[10px] font-bold px-3 py-1.5 rounded-[4px] border ${sessionRule === 'all' ? 'bg-[#eef0ff] text-[#5c66f2] border-[#d6dbff]' : 'bg-slate-50 text-slate-500 border-slate-200'}`}>
-                                    {sessionRule === 'all' ? '필수' : '선택'}
-                                  </span>
-                                </div>
-                                {/* 이수 조건 요약 (전체 필수형일 때만 노출) */}
-                                {sessionRule === 'all' && (
-                                  <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2 text-[10px] text-slate-500">
-                                    <span className="font-bold text-[#5c66f2]">이수 조건</span>
-                                    <span>출석 처리 완료 시 이수</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )) : (
-                            <div className="text-center py-8 text-slate-400 text-[11px] bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                              설정된 회차가 없습니다.<br/>좌측에서 회차를 {sessionRule === 'all' ? '생성' : '추가'}해주세요.
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 오프라인 전용 하단 상태 요약바 */}
-                  <div className="mt-auto p-5 border-t border-slate-100 bg-[#fbfcfd]">
-                    <div className="flex items-center justify-between text-[12px] font-bold text-slate-600">
-                      <span className="flex items-center gap-2"><CheckCircle size={16} className="text-green-500" /> 좌측 회차 연동 완료</span>
-                      <span className="text-[#5c66f2]">총 {sessions.length}개</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* 분기: 온라인 또는 블렌디드 코스일 경우 기존의 자유 편집 모드 노출 */
-                <>
-                  <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
-                    <div className="space-y-6">
-                      {/* Module 1 */}
-                      <div className="relative">
-                        <div className="flex items-center gap-3 mb-4 group">
-                          <div className="w-6 h-6 bg-slate-900 text-white rounded text-[10px] font-bold flex items-center justify-center shrink-0">01</div>
-                          <h4 className="text-[13px] font-bold text-slate-900 truncate flex-1">오리엔테이션 및 기초 학습</h4>
-                          <Settings2 size={14} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-slate-600" />
-                        </div>
-
-                        <div className="ml-3 pl-6 border-l-2 border-slate-100 space-y-3 relative">
-                          <div className="relative group">
-                            <div className="absolute -left-[31px] top-6 -translate-y-1/2 w-2.5 h-2.5 bg-white border-2 border-blue-500 rounded-full z-10 group-hover:scale-125 transition-transform"></div>
-                            <div className="bg-slate-50 border border-slate-200 p-3 rounded-lg flex flex-col gap-2 hover:border-blue-300 hover:shadow-sm transition-all">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded flex items-center justify-center shrink-0"><Video size={16} /></div>
-                                <div className="flex-1 overflow-hidden">
-                                  <div className="text-[11px] font-bold text-slate-700 truncate">신입사원 환영사 및 비전 공유</div>
-                                  <div className="text-[9px] text-slate-400 mt-0.5 uppercase">Video · 15:00</div>
-                                </div>
-                                <ItemRequiredToggle initial={reqStates.item1} onToggle={(s) => setReqStates({...reqStates, item1: s})} />
-                              </div>
-                              
-                              {reqStates.item1 && (
-                                <div onClick={() => setEditingItem({ type: 'video', title: '신입사원 환영사 및 비전 공유' })} className="bg-white border border-slate-200 rounded p-2 flex items-center justify-between cursor-pointer hover:border-blue-400 group/settings transition-colors">
-                                  <div className="text-[10px] text-slate-500 flex items-center gap-2">
-                                    <span className="font-bold text-[#5c66f2]">이수 조건</span>
-                                    <span>진도율 100% · 최소 15분</span>
-                                    <span className="text-slate-300">|</span>
-                                    <span>스킵 방지 ON</span>
-                                  </div>
-                                  <Settings2 size={12} className="text-slate-400 group-hover/settings:text-[#5c66f2]" />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="relative group">
-                            <div className="absolute -left-[31px] top-6 -translate-y-1/2 w-2.5 h-2.5 bg-white border-2 border-slate-300 rounded-full z-10 group-hover:border-blue-500 transition-colors"></div>
-                            <div className="bg-white border border-slate-200 p-3 rounded-lg flex flex-col gap-2 hover:border-blue-300 transition-all">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-slate-100 text-slate-400 rounded flex items-center justify-center shrink-0"><FileText size={16} /></div>
-                                <div className="flex-1 overflow-hidden">
-                                  <div className="text-[11px] font-bold text-slate-700 truncate">사내 핵심가치 가이드북</div>
-                                  <div className="text-[9px] text-slate-400 mt-0.5 uppercase">Document · PDF</div>
-                                </div>
-                                <ItemRequiredToggle initial={reqStates.item2} onToggle={(s) => setReqStates({...reqStates, item2: s})} />
-                              </div>
-
-                              {reqStates.item2 && (
-                                <div onClick={() => setEditingItem({ type: 'document', title: '사내 핵심가치 가이드북' })} className="bg-white border border-slate-200 rounded p-2 flex items-center justify-between cursor-pointer hover:border-blue-400 group/settings transition-colors">
-                                  <div className="text-[10px] text-slate-500 flex items-center gap-2">
-                                    <span className="font-bold text-[#5c66f2]">이수 조건</span>
-                                    <span>열람 필수 · 최소 5분</span>
-                                  </div>
-                                  <Settings2 size={12} className="text-slate-400 group-hover/settings:text-[#5c66f2]" />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Module 2 (Blended 전용 Hook) */}
-                      {courseType === 'blended' && (
-                        <div className="relative">
-                          <div className="flex items-center gap-3 mb-4 group">
-                            <div className="w-6 h-6 bg-slate-900 text-white rounded text-[10px] font-bold flex items-center justify-center shrink-0">02</div>
-                            <h4 className="text-[13px] font-bold text-slate-900 truncate flex-1">현장 실습 및 네트워킹</h4>
-                            <Settings2 size={14} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" />
-                          </div>
-                          <div className="ml-3 pl-6 border-l-2 border-slate-100 space-y-3 relative">
-                            <div className="relative group cursor-pointer">
-                              <div className="absolute -left-[31px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white border-2 border-green-500 rounded-full z-10"></div>
-                              <div className="bg-green-50/50 border border-green-200 p-3 rounded-lg flex items-center gap-3">
-                                <div className="w-8 h-8 bg-green-100 text-green-600 rounded flex items-center justify-center shrink-0"><MapPin size={16} /></div>
-                                <div className="flex-1 overflow-hidden">
-                                  <div className="text-[11px] font-bold text-slate-800">현장 출석 체크</div>
-                                  <div className="text-[9px] text-green-600 mt-0.5 font-bold uppercase tracking-tighter">Offline Session Linked</div>
-                                </div>
-                                <ItemRequiredToggle initial={true} />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Dynamic Modules (사용자가 추가한 모듈) */}
-                      {customModules.map((mod, index) => {
-                        const moduleNumber = (courseType === 'blended' ? 3 : 2) + index;
-                        return (
-                          <div key={mod.id} className="relative mt-6 animate-fadeIn">
-                            <div className="flex items-center gap-3 mb-4 group">
-                              <div className="w-6 h-6 bg-slate-900 text-white rounded text-[10px] font-bold flex items-center justify-center shrink-0">
-                                {String(moduleNumber).padStart(2, '0')}
-                              </div>
-                              <input
-                                type="text"
-                                className="text-[13px] font-bold text-slate-900 bg-transparent flex-1 outline-none border-b border-transparent focus:border-[#5c66f2] hover:border-slate-300 transition-colors pb-0.5"
-                                defaultValue={mod.title}
-                                placeholder="모듈 이름을 입력하세요"
-                              />
-                              <button 
-                                onClick={() => setCustomModules(customModules.filter(m => m.id !== mod.id))} 
-                                className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                                title="모듈 삭제"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                            <div className="ml-3 pl-6 border-l-2 border-slate-100 relative">
-                              <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-center gap-3">
-                                <span className="text-[11px] font-bold text-slate-400">등록된 학습 항목이 없습니다</span>
-                                <button onClick={() => setLibraryModalOpen(true)} className="text-[11px] bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded shadow-sm font-bold hover:text-[#5c66f2] hover:border-[#5c66f2] transition-colors flex items-center gap-1">
-                                    <Plus size={12}/> 항목 매핑하기
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                    </div>
-
-                    <button 
-                      onClick={() => {
-                        const nextNumber = (courseType === 'blended' ? 3 : 2) + customModules.length;
-                        setCustomModules([...customModules, { id: Date.now(), title: `새로운 챕터/모듈 ${nextNumber}` }]);
-                      }} 
-                      className="w-full mt-8 py-3 border-2 border-dashed border-slate-200 rounded-xl text-[11px] font-bold text-slate-400 hover:border-blue-300 hover:text-blue-500 hover:bg-blue-50/30 transition-all flex flex-col items-center gap-1 group"
-                    >
-                      <Plus size={16} className="group-hover:scale-110 transition-transform" />
-                      <span>새로운 챕터/모듈 추가</span>
-                    </button>
-                  </div>
-
-                  {/* Bottom Quick Tools */}
-                  <div className="p-5 border-t border-slate-100 bg-[#fbfcfd]">
-                    <div className="flex gap-2">
-                      <button onClick={() => setLibraryModalOpen(true)} className="flex-1 py-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:border-blue-500 hover:text-blue-600 shadow-sm transition-all flex items-center justify-center gap-1.5">
-                        <Plus size={14} /> 학습 항목 추가
-                      </button>
-                      <button className="flex-1 py-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:border-blue-500 hover:text-blue-600 shadow-sm transition-all flex items-center justify-center gap-1.5">
-                        <RotateCcw size={14} /> 기존 코스 링크
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </aside>
-          </main>
-
-          {/* 추가: 학습 요소 상세 설정 모달 */}
-          {editingItem && (
-            <div className="fixed inset-0 bg-slate-900/60 z-[110] flex items-center justify-center animate-fadeIn p-10">
-              <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl flex flex-col overflow-hidden">
-                <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                  <h2 className="text-[15px] font-bold flex items-center gap-2 text-slate-800">
-                    <Settings2 size={18} className="text-[#5c66f2]" /> 학습 요소 상세 설정
-                  </h2>
-                  <button onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-slate-900"><X size={20}/></button>
-                </div>
-                
-                <div className="p-6 bg-white overflow-y-auto custom-scrollbar max-h-[60vh]">
-                  <div className="mb-6">
-                    <div className="text-[11px] font-bold text-slate-400 uppercase mb-1">대상 항목</div>
-                    <div className="text-[14px] font-bold text-slate-800">{editingItem.title}</div>
-                  </div>
-
-                  <div className="space-y-6">
-                    {/* 이수 기준 설정 */}
-                    <div>
-                      <h3 className="text-[13px] font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2">이수 기준 (필수 항목)</h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <label className="text-[12px] font-semibold text-slate-600">진도율 (열람율) 기준</label>
-                          <div className="flex items-center gap-2">
-                            <input type="number" defaultValue="100" className="w-16 border border-slate-200 rounded p-1.5 text-[12px] text-center outline-none focus:border-[#5c66f2]" />
-                            <span className="text-[12px] text-slate-500">% 이상</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <label className="text-[12px] font-semibold text-slate-600">최소 학습(체류) 시간</label>
-                          <div className="flex items-center gap-2">
-                            <input type="number" defaultValue="15" className="w-16 border border-slate-200 rounded p-1.5 text-[12px] text-center outline-none focus:border-[#5c66f2]" />
-                            <span className="text-[12px] text-slate-500">분 이상</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 비디오 전용 옵션 */}
-                    {editingItem.type === 'video' && (
-                      <div>
-                        <h3 className="text-[13px] font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2">동영상 재생 제어</h3>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="text-[12px] font-semibold text-slate-600">비디오 스킵(건너뛰기) 방지</div>
-                              <div className="text-[10px] text-slate-400 mt-0.5">학습자가 임의로 영상을 앞으로 탐색하는 것을 차단합니다.</div>
-                            </div>
-                            <Toggle active={true} />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="text-[12px] font-semibold text-slate-600">배속 재생 허용</div>
-                              <div className="text-[10px] text-slate-400 mt-0.5">최대 2.0x 배속 재생 기능을 활성화합니다.</div>
-                            </div>
-                            <Toggle active={false} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-5 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
-                  <button onClick={() => setEditingItem(null)} className="px-5 py-2 border border-slate-300 rounded font-bold text-[12px] hover:bg-white text-slate-600">취소</button>
-                  <button onClick={() => setEditingItem(null)} className="px-5 py-2 bg-[#5c66f2] text-white rounded font-bold text-[12px] hover:bg-[#4a54e1] shadow-sm">설정 저장</button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Library Modal */}
-          {isLibraryModalOpen && (
-            <div className="fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center animate-fadeIn p-10">
-              <div className="bg-white w-full max-w-4xl h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                  <h2 className="text-lg font-bold flex items-center gap-2">
-                    <Layers className="text-[#5c66f2]" /> 학습 항목 추가 (콘텐츠 보관함)
-                  </h2>
-                  <button onClick={() => { setLibraryModalOpen(false); setLibraryCategory('all'); }} className="text-slate-400 hover:text-slate-900"><X size={24}/></button>
-                </div>
-                
-                {/* Modal Body - Split View */}
-                <div className="flex-1 flex overflow-hidden">
-                  
-                  {/* Left Sidebar - Categories */}
-                  <div className="w-48 border-r border-slate-200 bg-slate-50 p-4">
-                    <ul className="space-y-1">
-                      <li><button onClick={() => setLibraryCategory('all')} className={`w-full text-left px-3 py-2 rounded text-[13px] ${libraryCategory === 'all' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-100 font-semibold'}`}>전체 항목</button></li>
-                      <li><button onClick={() => setLibraryCategory('video')} className={`w-full text-left px-3 py-2 rounded text-[13px] ${libraryCategory === 'video' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-100 font-semibold'}`}>동영상 (VOD)</button></li>
-                      <li><button onClick={() => setLibraryCategory('document')} className={`w-full text-left px-3 py-2 rounded text-[13px] ${libraryCategory === 'document' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-100 font-semibold'}`}>문서 (PDF)</button></li>
-                      <li><button onClick={() => setLibraryCategory('exam')} className={`w-full text-left px-3 py-2 rounded text-[13px] ${libraryCategory === 'exam' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-100 font-semibold'}`}>시험/퀴즈</button></li>
-                      <li><button onClick={() => setLibraryCategory('survey')} className={`w-full text-left px-3 py-2 rounded text-[13px] ${libraryCategory === 'survey' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-100 font-semibold'}`}>설문</button></li>
-                    </ul>
-                  </div>
-
-                  {/* Right Content - Item List */}
-                  <div className="flex-1 p-6 flex flex-col">
-                    {/* Search Bar */}
-                    <div className="flex gap-2 mb-6">
-                      <div className="relative flex-1">
-                        <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
-                        <input type="text" className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:border-[#5c66f2] focus:outline-none text-[13px]" placeholder="보관함 내 학습 항목 검색" />
-                      </div>
-                      <button className="bg-slate-800 text-white px-5 py-2 rounded-lg text-[13px] font-bold hover:bg-slate-900">검색</button>
-                    </div>
-
-                    {/* Item List */}
-                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
-                      {filteredLibraryItems.length > 0 ? filteredLibraryItems.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-[#5c66f2] hover:bg-[#f8f9ff] transition-all cursor-pointer group">
-                          <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                              item.type === 'video' ? 'bg-blue-100 text-blue-600' : 
-                              item.type === 'document' ? 'bg-slate-100 text-slate-600' : 
-                              item.type === 'exam' ? 'bg-indigo-100 text-indigo-600' :
-                              'bg-purple-100 text-purple-600'
-                            }`}>
-                              {item.type === 'video' ? <Video size={20} /> : 
-                               item.type === 'document' ? <FileText size={20} /> : 
-                               <List size={20} />}
-                            </div>
-                            <div>
-                              <div className="font-bold text-[13px] text-slate-800 group-hover:text-[#5c66f2] transition-colors">{item.title}</div>
-                              <div className="text-[11px] text-slate-400 mt-1 flex gap-3">
-                                <span className="uppercase">{item.type}</span>
-                                <span>{item.type === 'exam' || item.type === 'survey' ? '상세' : '재생시간'}: {item.time}</span>
-                                <span>등록일: {item.date}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <button className="px-4 py-1.5 border border-slate-300 rounded text-[12px] font-bold text-slate-600 group-hover:bg-[#5c66f2] group-hover:text-white group-hover:border-[#5c66f2] transition-all">
-                            추가
-                          </button>
-                        </div>
-                      )) : (
-                        <div className="h-full flex flex-col items-center justify-center text-slate-400">
-                           <Info size={32} className="mb-2 opacity-50"/>
-                           <p className="text-[13px]">해당 카테고리에 등록된 항목이 없습니다.</p>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
-                      <p className="text-[12px] text-slate-500">
-                        {libraryCategory === 'exam' ? '원하는 시험/퀴즈가 없나요?' : 
-                         libraryCategory === 'survey' ? '원하는 설문이 없나요?' :
-                         '원하는 항목이 없나요?'}
-                      </p>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-[13px] font-bold hover:bg-slate-200 transition-colors">
-                        {libraryCategory === 'exam' ? <><Plus size={16} /> 새 시험 만들기</> :
-                         libraryCategory === 'survey' ? <><Plus size={16} /> 새 설문 만들기</> :
-                         <><UploadCloud size={16} /> PC에서 새 파일 업로드</>}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    };
-
-    const root = createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+      el=el.parentElement;
+    }
+  });
+  // session input bindings
+  document.querySelectorAll('.s-date,.s-st,.s-et,.s-pl,.s-cp').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var sid=parseInt(inp.dataset.sid);
+      var key={'.s-date':'date','.s-st':'st','.s-et':'et','.s-pl':'place','.s-cp':'cap'}['.'+inp.className.split(' ').find(function(c){return c.startsWith('s-')})];
+      if(!key) return;
+      S.sessions=S.sessions.map(function(s){
+        if(s.id!==sid) return s;
+        var n=Object.assign({},s);
+        n[key]=key==='cap'?parseInt(inp.value)||0:inp.value;
+        return n;
+      });
+    });
+  });
+}
+ 
+render();
+</script>
 </body>
 </html>
