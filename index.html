@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TouchClass</title>
+<title>TouchClass Course Editor</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#0F172A;overflow:hidden;}
@@ -54,25 +54,17 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .or:last-child{border-bottom:none}
 
 /* ── RULE CARDS — flicker-free transitions ── */
-.rc{border:1.5px solid var(--bo);border-radius:14px;padding:16px;cursor:pointer;position:relative;
-  transition:border-color .25s ease, background .25s ease, box-shadow .25s ease}
+.rc{border:1.5px solid var(--bo);border-radius:14px;padding:16px;cursor:pointer;position:relative; transition:border-color .25s ease, background .25s ease, box-shadow .25s ease}
 .rc.on{border-color:var(--b);background:#F5F7FF;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
 .rc .rc-icon{transition:background .25s ease, color .25s ease}
 .rc .rc-label{transition:color .25s ease}
 .rc .rad{transition:all .2s ease}
 
 /* sub-content panel — smooth expand/collapse */
-.rc-sub{
-  overflow:hidden;
-  max-height:0;opacity:0;margin-top:0;
-  transition:max-height .3s ease, opacity .25s ease, margin-top .25s ease;
-}
-.rc.on .rc-sub{
-  max-height:80px;opacity:1;margin-top:10px;
-}
+.rc-sub{ overflow:hidden; max-height:0;opacity:0;margin-top:0; transition:max-height .3s ease, opacity .25s ease, margin-top .25s ease;}
+.rc.on .rc-sub{ max-height:80px;opacity:1;margin-top:10px;}
 
-.ib{background:#F0F4FF;border:1px solid #C7D2FE;border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:12px;color:#4F46E5;line-height:1.6;font-weight:500;
-  transition:all .3s ease;}
+.ib{background:#F0F4FF;border:1px solid #C7D2FE;border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:12px;color:#4F46E5;line-height:1.6;font-weight:500; transition:all .3s ease;}
 
 .stbl{width:100%;border-collapse:collapse}
 .stbl th{font-size:11px;font-weight:600;color:var(--fa);text-transform:uppercase;letter-spacing:.05em;padding:10px 8px;text-align:left;background:#F8FAFC;border-bottom:1px solid var(--bo)}
@@ -158,12 +150,12 @@ input[type=time]::-webkit-calendar-picker-indicator,
 input[type=datetime-local]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.5}
 
 /* ── NEW: Quick Stats Bar ── */
-.qstats{display:flex;gap:12px;margin-bottom:16px}
-.qstat{flex:1;background:#fff;border:1px solid var(--bo);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;transition:all .2s}
-.qstat:hover{border-color:var(--b);transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.06)}
-.qstat-val{font-size:22px;font-weight:800;color:var(--tx);line-height:1;animation:countUp .3s both}
-.qstat-label{font-size:10px;font-weight:700;color:var(--fa);text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
-.qstat-icon{position:absolute;top:12px;right:12px;opacity:.15;font-size:20px}
+.qstats{display:flex;gap:10px;margin-bottom:0;position:sticky;top:0;z-index:10;background:var(--bg);padding:0 0 14px;margin:0 0 16px}
+.qstat{flex:1;background:#fff;border:1px solid var(--bo);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;transition:all .2s}
+.qstat:hover{border-color:var(--b);box-shadow:0 2px 8px rgba(79,70,229,.06)}
+.qstat-val{font-size:17px;font-weight:600;color:var(--tx);line-height:1}
+.qstat-label{font-size:10px;font-weight:600;color:var(--fa);text-transform:uppercase;letter-spacing:.05em;margin-top:5px}
+.qstat-icon{position:absolute;top:10px;right:10px;opacity:.12;font-size:18px}
 
 /* ── NEW: Roadmap Enhance ── */
 .rm-progress{height:3px;background:#E2E8F0;border-radius:3px;margin-top:12px;overflow:hidden}
@@ -188,6 +180,7 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator{cursor:pointer;opa
 </head>
 <body>
 <div id="app"></div>
+
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
 var S = {
@@ -198,9 +191,14 @@ var S = {
     {id:2,date:'',st:'',et:'',place:'',cap:30}
   ],
   mods:[], tog:{en1:false,en2:false,mon:false,unl:false,seq:false,pre:false,qr:true,man:true},
-  libOpen:false, libCat:'all', setOpen:false, setTitle:'',
+  libOpen:false, libCat:'all', setOpen:false, setTitle:'', setType:'', setLoc:'',
   tags:['신입사원','2026년 3월','온보딩'],
-  batchPlace:''
+  batchPlace:'',
+  previewOpen:false,
+  rmItems:[
+    {id:'default-1',title:'신입사원 환영사 및 비전 공유',type:'video',sub:'Video · 15:00',isReq:true,cond:'진도율 100% · 최소 15분 · 스킵 방지 ON'},
+    {id:'default-2',title:'사내 핵심가치 가이드북',type:'doc',sub:'Document · PDF',isReq:false,cond:null}
+  ]
 };
 
 // ─── TARGETED UPDATE for rule changes (flicker fix) ──────────────────────────
@@ -265,18 +263,32 @@ function getDisplaySessions(){
 
 function buildCustomChapters(){
   var chN=S.ctype==='blended'?3:2;
+  var iconMap={video:{bg:'#DBEAFE',col:'#2563EB',ic:'video'},doc:{bg:'#F1F5F9',col:'#64748B',ic:'doc'},exam:{bg:'#EDE9FE',col:'#7C3AED',ic:'list'},survey:{bg:'#FAE8FF',col:'#9333EA',ic:'list'}};
   return S.mods.map(function(m,idx){
     var n=chN+idx;
-    return '<div class="rmc au" style="animation-delay:'+(idx*0.05)+'s">'+
-      '<div class="rmch"><div class="rmn">'+String(n).padStart(2,'0')+'</div>'+
-        '<input value="'+m.title+'" style="font-size:13px;font-weight:800;background:transparent;border:none;outline:none;flex:1;font-family:inherit">'+
-        '<button data-action="removemod" data-mid="'+m.id+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:4px">'+ic('trash',13)+'</button></div>'+
-      '<div class="rmcl"></div>'+
-      '<div class="rmis"><div class="emp" style="padding:20px">'+
+    var itemsHTML='';
+    if(m.items&&m.items.length>0){
+      itemsHTML=m.items.map(function(item){
+        var im=iconMap[item.type]||iconMap.doc;
+        var loc='Ch.'+String(n).padStart(2,'0')+' '+m.title;
+        return rmItem(im.ic,im.bg,im.col,item.title,item.sub,item.isReq||false,item.cond||null,false,item.type,loc);
+      }).join('');
+      itemsHTML+='<button data-action="openlib" style="width:100%;margin-top:6px;padding:8px;background:#fff;border:1px dashed #E2E8F0;border-radius:8px;font-size:11px;font-weight:600;color:#94A3B8;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#4F46E5\';this.style.color=\'#4F46E5\'" onmouseout="this.style.borderColor=\'#E2E8F0\';this.style.color=\'#94A3B8\'">'+ic('plus',10)+' 항목 추가</button>';
+    } else {
+      itemsHTML='<div class="emp" style="padding:20px">'+
         '<span style="font-size:18px">➕</span>'+
         '<span style="font-size:11px;color:#94A3B8;font-weight:600">학습 항목이 없습니다</span>'+
         '<button data-action="openlib" style="font-size:11px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:5px 12px;cursor:pointer;color:#64748B;font-weight:700;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',11)+' 항목 매핑</button>'+
-      '</div></div></div>';
+      '</div>';
+    }
+    var countBdg=m.items&&m.items.length>0?'<span class="bdg bi" style="margin-left:auto;font-size:9px">'+m.items.length+'</span>':'';
+    return '<div class="rmc au" style="animation-delay:'+(idx*0.05)+'s">'+
+      '<div class="rmch"><div class="rmn">'+String(n).padStart(2,'0')+'</div>'+
+        '<input value="'+m.title+'" style="font-size:13px;font-weight:800;background:transparent;border:none;outline:none;flex:1;font-family:inherit">'+
+        countBdg+
+        '<button data-action="removemod" data-mid="'+m.id+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:4px">'+ic('trash',13)+'</button></div>'+
+      '<div class="rmcl"></div>'+
+      '<div class="rmis">'+itemsHTML+'</div></div>';
   }).join('');
 }
 
@@ -398,7 +410,7 @@ function render(){
 // ── SELECTION ─────────────────────────────────────────────────────────────────
 function selHTML(){
   var types=[
-    {id:'online', e:'🎬',label:'온라인 코스',   bg:'#DBEAFE',desc:'비대면·자기주도 학습 과정을 설계합니다. VOD, 문서, 시험을 자유롭게 조합하세요.',tags:['VOD','문서','시험/퀴즈']},
+    {id:'online', e:'🎬',label:'온라인 코스',  bg:'#DBEAFE',desc:'비대면·자기주도 학습 과정을 설계합니다. VOD, 문서, 시험을 자유롭게 조합하세요.',tags:['VOD','문서','시험/퀴즈']},
     {id:'offline',e:'📍',label:'오프라인 코스',  bg:'#FFE4E6',desc:'집합 교육과 출석 관리에 최적화된 플로우입니다. QR 출석 및 회차 관리를 지원합니다.',tags:['회차 관리','QR 출석','수기 처리']},
     {id:'blended',e:'✨',label:'블렌디드 코스',  bg:'#EDE9FE',desc:'온/오프라인을 유기적으로 결합합니다. 사전·사후 학습부터 현장 교육, 평가까지 한 흐름으로.',tags:['온+오프 결합','사전 학습']}
   ];
@@ -435,6 +447,7 @@ function editorHTML(){
     '<div class="body">'+leftHTML(isOff)+rightHTML()+'</div>'+
     (S.setOpen?setModalHTML():'')+
     (S.libOpen?libModalHTML():'')+
+    (S.previewOpen?previewModalHTML():'')+
     '</div>';
 }
 
@@ -453,8 +466,9 @@ function hdrHTML(lbl,emj,bc){
 
 // ── LEFT PANEL ────────────────────────────────────────────────────────────────
 function leftHTML(isOff){
-  var h='<div class="lp"><div class="li">';
+  var h='<div class="lp">';
   h+=quickStatsBar();
+  h+='<div class="li">';
   h+=basicCard();
   h+=enrollCard();
   h+=periodCard();
@@ -570,9 +584,6 @@ function sessionsCard(){
     {id:'multiple',icon:'⊞',label:'복수 회차 선택',desc:'지정된 수량만큼 조합하여 선택 수강합니다'},
     {id:'all',icon:'🗓',label:'전체 회차 필수',desc:'모든 회차에 일괄 자동 등록됩니다'}
   ];
-  /* KEY FIX: All three rule cards are always rendered. 
-     Sub-content is inside each card with CSS transition (rc-sub class).
-     No conditional innerHTML swap when switching rules. */
   var rcards=rules.map(function(r){
     var a=S.rule===r.id;
     var sub='';
@@ -731,10 +742,10 @@ function offRoadmapHTML(){
   var progress = Math.min(100, Math.round((ds.filter(function(s){return s.date;}).length / Math.max(1,ds.length)) * 100));
 
   return '<div class="rmh">'+
-      '<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'+
-        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div>'+
-      '<div class="tip" data-tip="회차 일정 입력 진행률">'+
-        '<div id="rm-progress-label" style="background:#EEF2FF;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;color:#4F46E5">'+progress+'% 입력</div>'+
+      '<div><div style="font-size:13px;font-weight:800">커리큘럼 관리</div>'+
+        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Curriculum Manager</div></div>'+
+      '<div class="fl ac g6">'+
+        '<button data-action="preview" style="background:#fff;border:1.5px solid var(--bo);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#4F46E5\';this.style.color=\'#4F46E5\'" onmouseout="this.style.borderColor=\'#E2E8F0\';this.style.color=\'#64748B\'">'+ic('video',11)+' 미리보기</button>'+
       '</div></div>'+
     '<div class="rmb">'+
       '<div class="ofn">'+
@@ -760,15 +771,17 @@ function offRoadmapHTML(){
     '</div>';
 }
 
-function rmItem(iconName,iconBg,iconColor,title,sub,isReq,hasCond,greenStyle){
+function rmItem(iconName,iconBg,iconColor,title,sub,isReq,hasCond,greenStyle,itemType,location){
   var nCls=greenStyle?'ng':'nb';
   var iCls=greenStyle?'rmic gi':'rmic';
   var tColor=greenStyle?'#065F46':'#0F172A';
   var sColor=greenStyle?'#10B981':'#94A3B8';
   var sWeight=greenStyle?'700':'400';
+  var iType=itemType||'doc';
+  var iLoc=location||'';
   var condEl='';
   if(isReq&&hasCond){
-    condEl='<div class="cb" data-action="opensettings" data-title="'+title+'">'+
+    condEl='<div class="cb" data-action="opensettings" data-title="'+title+'" data-itype="'+iType+'" data-iloc="'+iLoc+'">'+
       '<div class="fl ac g6" style="font-size:10px;color:#64748B">'+
         '<span style="font-weight:700;color:#4F46E5">이수 조건</span>'+
         '<span>'+hasCond+'</span></div>'+
@@ -788,6 +801,15 @@ function rmItem(iconName,iconBg,iconColor,title,sub,isReq,hasCond,greenStyle){
     '</div></div>';
 }
 
+function buildRmItemsHTML(){
+  if(S.rmItems.length===0) return '<div class="emp" style="padding:16px"><span style="font-size:11px;color:#94A3B8">학습 항목을 추가해주세요</span></div>';
+  var iconMap={video:{bg:'#DBEAFE',col:'#2563EB',ic:'video'},doc:{bg:'#F1F5F9',col:'#64748B',ic:'doc'},exam:{bg:'#EDE9FE',col:'#7C3AED',ic:'list'},survey:{bg:'#FAE8FF',col:'#9333EA',ic:'list'}};
+  return S.rmItems.map(function(item){
+    var m=iconMap[item.type]||iconMap.doc;
+    return rmItem(m.ic,m.bg,m.col,item.title,item.sub,item.isReq,item.cond,false,item.type,'Ch.01 오리엔테이션 및 기초 학습');
+  }).join('');
+}
+
 function freeRoadmapHTML(){
   var chN=S.ctype==='blended'?3:2;
   var blendedCh='';
@@ -801,18 +823,19 @@ function freeRoadmapHTML(){
   var customChs = buildCustomChapters();
 
   return '<div class="rmh">'+
-      '<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'+
-        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div>'+
-      '<button data-action="openlib" style="background:#F1F5F9;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',12)+' 항목 추가</button></div>'+
+      '<div><div style="font-size:13px;font-weight:800">커리큘럼 관리</div>'+
+        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Curriculum Manager</div></div>'+
+      '<div class="fl ac g6">'+
+        '<button data-action="preview" style="background:#fff;border:1.5px solid var(--bo);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#4F46E5\';this.style.color=\'#4F46E5\'" onmouseout="this.style.borderColor=\'#E2E8F0\';this.style.color=\'#64748B\'">'+ic('video',11)+' 미리보기</button>'+
+        '<button data-action="openlib" style="background:#F1F5F9;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',12)+' 항목 추가</button>'+
+      '</div></div>'+
     '<div class="rmb">'+
       '<div class="rmc">'+
         '<div class="rmch"><div class="rmn">01</div>'+
-          '<span style="font-size:13px;font-weight:800">오리엔테이션 및 기초 학습</span></div>'+
+          '<span style="font-size:13px;font-weight:800">오리엔테이션 및 기초 학습</span>'+
+          '<span class="bdg bi" style="margin-left:auto">'+S.rmItems.length+'</span></div>'+
         '<div class="rmcl"></div>'+
-        '<div class="rmis">'+
-          rmItem('video','#DBEAFE','#2563EB','신입사원 환영사 및 비전 공유','Video · 15:00',true,'진도율 100% · 최소 15분 · 스킵 방지 ON',false)+
-          rmItem('doc','#F1F5F9','#64748B','사내 핵심가치 가이드북','Document · PDF',false,null,false)+
-        '</div></div>'+
+        '<div class="rmis">'+buildRmItemsHTML()+'</div></div>'+
       blendedCh+
       '<div id="custom-chapters">'+customChs+'</div>'+
       '<button data-action="addmod" style="width:100%;margin-top:14px;padding:13px;border:1.5px dashed #CBD5E1;border-radius:14px;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:#94A3B8;font-size:11px;font-weight:700;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#4F46E5\';this.style.color=\'#4F46E5\'" onmouseout="this.style.borderColor=\'#CBD5E1\';this.style.color=\'#94A3B8\'">'+
@@ -826,28 +849,83 @@ function freeRoadmapHTML(){
 // ── MODALS ────────────────────────────────────────────────────────────────────
 function setModalHTML(){
   var title=S.setTitle;
+  var iType=S.setType;
+  var iLoc=S.setLoc;
+  var typeLabels={video:'동영상 (VOD)',doc:'문서 (PDF)',exam:'시험/퀴즈',survey:'설문'};
+  var typeBgs={video:'#DBEAFE',doc:'#F1F5F9',exam:'#EDE9FE',survey:'#FAE8FF'};
+  var typeCols={video:'#2563EB',doc:'#64748B',exam:'#7C3AED',survey:'#9333EA'};
+  var typeIcons={video:'video',doc:'doc',exam:'list',survey:'list'};
+  var tLabel=typeLabels[iType]||'항목';
+  var tBg=typeBgs[iType]||'#F1F5F9';
+  var tCol=typeCols[iType]||'#64748B';
+  var tIc=typeIcons[iType]||'doc';
+
+  // Type-specific settings sections
+  var isVideo=iType==='video';
+  var isExam=iType==='exam';
+  var isSurvey=iType==='survey';
+
+  var criteriaSection='';
+  if(isVideo){
+    criteriaSection=
+      '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">진도율 기준</label>'+
+        '<div class="fl ac g8"><input type="number" value="100" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">% 이상</span></div></div>'+
+      '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">최소 학습 시간</label>'+
+        '<div class="fl ac g8"><input type="number" value="15" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분 이상</span></div></div>'+
+      '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">동영상 재생 제어</div>'+
+      '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
+        '<div style="font-size:13px;font-weight:600">스킵(건너뛰기) 방지</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 영상을 임의로 앞으로 탐색하는 것을 차단합니다</div></div>'+
+        '<button class="tog on" onclick="this.classList.toggle(\'on\')"></button></div>'+
+      '<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'+
+        '<div style="font-size:13px;font-weight:600">배속 재생 허용</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">최대 2.0x 배속 기능을 활성화합니다</div></div>'+
+        '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>';
+  } else if(isExam){
+    criteriaSection=
+      '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">합격 점수</label>'+
+        '<div class="fl ac g8"><input type="number" value="60" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">점 이상</span></div></div>'+
+      '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">제한 시간</label>'+
+        '<div class="fl ac g8"><input type="number" value="30" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분</span></div></div>'+
+      '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">재응시 허용 횟수</label>'+
+        '<div class="fl ac g8"><input type="number" value="3" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">회</span></div></div>';
+  } else if(isSurvey){
+    criteriaSection=
+      '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
+        '<div style="font-size:13px;font-weight:600">제출 완료 시 이수 처리</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">설문을 모두 제출하면 자동으로 이수 처리됩니다</div></div>'+
+        '<button class="tog on" onclick="this.classList.toggle(\'on\')"></button></div>'+
+      '<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'+
+        '<div style="font-size:13px;font-weight:600">익명 제출 허용</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">응답자 정보를 수집하지 않습니다</div></div>'+
+        '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>';
+  } else {
+    criteriaSection=
+      '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
+        '<div style="font-size:13px;font-weight:600">열람 완료 시 이수 처리</div>'+
+        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">문서를 끝까지 열람하면 자동으로 이수 처리됩니다</div></div>'+
+        '<button class="tog on" onclick="this.classList.toggle(\'on\')"></button></div>'+
+      '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">최소 열람 시간</label>'+
+        '<div class="fl ac g8"><input type="number" value="5" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분 이상</span></div></div>';
+  }
+
   return '<div class="ovl" data-action="closeset">'+
     '<div class="mdl" style="width:460px" data-stop="1">'+
       '<div class="mh">'+
         '<div class="fl ac g8">'+ic('cog',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 요소 상세 설정</span></div>'+
         '<button data-action="closeset" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'+
       '<div class="mb">'+
-        '<div class="mb18"><div class="flbl" style="margin-bottom:3px">대상 항목</div>'+
-          '<div style="font-size:14px;font-weight:700">'+title+'</div></div>'+
+        '<div style="margin-bottom:20px">'+
+          '<div class="flbl" style="margin-bottom:6px">대상 항목</div>'+
+          '<div class="fl ac g10" style="margin-bottom:10px">'+
+            '<div style="width:34px;height:34px;background:'+tBg+';color:'+tCol+';border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic(tIc,15)+'</div>'+
+            '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+title+'</div>'+
+              '<div class="fl ac g6" style="margin-top:3px">'+
+                '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;background:'+tBg+';border-radius:5px;font-size:10px;font-weight:700;color:'+tCol+'">'+ic(tIc,9,tCol)+' '+tLabel+'</span>'+
+                (iLoc?'<span style="font-size:10px;color:#94A3B8;font-weight:600">'+ic('cr',8,'#CBD5E1')+' '+iLoc+'</span>':'')+
+              '</div></div></div></div>'+
         '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px">이수 기준</div>'+
-        '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">진도율 기준</label>'+
-          '<div class="fl ac g8"><input type="number" value="100" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">% 이상</span></div></div>'+
-        '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">최소 학습 시간</label>'+
-          '<div class="fl ac g8"><input type="number" value="15" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분 이상</span></div></div>'+
-        '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">동영상 재생 제어</div>'+
-        '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
-          '<div style="font-size:13px;font-weight:600">스킵(건너뛰기) 방지</div>'+
-          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 영상을 임의로 앞으로 탐색하는 것을 차단합니다</div></div>'+
-          '<button class="tog on" onclick="this.classList.toggle(\'on\')"></button></div>'+
-        '<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'+
-          '<div style="font-size:13px;font-weight:600">배속 재생 허용</div>'+
-          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">최대 2.0x 배속 기능을 활성화합니다</div></div>'+
-          '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>'+
+        criteriaSection+
       '</div>'+
       '<div class="mf">'+
         '<button data-action="closeset" class="btn bs2" style="padding:8px 16px;font-size:12px">취소</button>'+
@@ -863,17 +941,22 @@ function libModalHTML(){
   var filtered=S.libCat==='all'?LIB:LIB.filter(function(i){return i.type===S.libCat;});
   var items=filtered.length===0?
     '<div class="emp">'+ic('info',26,'#CBD5E1')+'<p style="font-size:13px;color:#94A3B8">해당 카테고리에 등록된 항목이 없습니다</p></div>':
-    filtered.map(function(item){
+    filtered.map(function(item,idx){
       var bg={video:'#DBEAFE',doc:'#F1F5F9',exam:'#EDE9FE',survey:'#FAE8FF'}[item.type]||'#F1F5F9';
       var col={video:'#2563EB',doc:'#64748B',exam:'#7C3AED',survey:'#9333EA'}[item.type]||'#64748B';
       var icn={video:'video',doc:'doc',exam:'list',survey:'list'}[item.type]||'doc';
+      var added=S.mods.some(function(m){return m.items&&m.items.some(function(it){return it.title===item.t;});});
+      var btnStyle=added?
+        'padding:5px 12px;border:1.5px solid #A7F3D0;border-radius:8px;font-size:12px;font-weight:700;color:#059669;background:#F0FDF9;cursor:default;flex-shrink:0;font-family:inherit':
+        'padding:5px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#64748B;background:#fff;cursor:pointer;flex-shrink:0;font-family:inherit;transition:all .15s';
+      var btnAttr=added?'':'data-action="addlib" data-idx="'+idx+'" onmouseover="this.style.borderColor=\'#4F46E5\';this.style.color=\'#4F46E5\'" onmouseout="this.style.borderColor=\'#E2E8F0\';this.style.color=\'#64748B\'"';
       return '<div class="lbi">'+
         '<div style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+bg+';color:'+col+'">'+ic(icn,17)+'</div>'+
         '<div class="f1">'+
           '<div style="font-size:13px;font-weight:700">'+item.t+'</div>'+
           '<div class="fl g10" style="font-size:11px;color:#94A3B8;margin-top:3px">'+
             '<span style="text-transform:uppercase">'+item.type+'</span><span>'+item.time+'</span><span>'+item.date+'</span></div></div>'+
-        '<button style="padding:5px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#64748B;background:#fff;cursor:pointer;flex-shrink:0;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#4F46E5\';this.style.color=\'#4F46E5\'" onmouseout="this.style.borderColor=\'#E2E8F0\';this.style.color=\'#64748B\'">추가</button>'+
+        '<button style="'+btnStyle+'" '+btnAttr+'>'+(added?'✓ 추가됨':'추가')+'</button>'+
       '</div>';
     }).join('');
 
@@ -893,8 +976,69 @@ function libModalHTML(){
           '<div class="lbl">'+items+'</div>'+
           '<div class="fl sb ac" style="margin-top:14px;padding-top:14px;border-top:1px solid #F1F5F9">'+
             '<span style="font-size:12px;color:#94A3B8">원하는 항목이 없나요?</span>'+
-            '<button style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#334155;cursor:pointer;font-family:inherit">'+ic('up',12)+' PC에서 파일 업로드</button></div>'+
+            '<button data-action="uploadlib" style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#334155;cursor:pointer;font-family:inherit;transition:all .15s">'+ic('up',12)+' PC에서 파일 업로드</button></div>'+
         '</div></div></div></div>';
+}
+
+function previewModalHTML(){
+  var chapters=[];
+  chapters.push({title:'오리엔테이션 및 기초 학습',items:S.rmItems.map(function(it){return {title:it.title,type:it.type};})});
+  S.mods.forEach(function(m){
+    var mItems=(m.items||[]).map(function(it){return {title:it.title,type:it.type};});
+    chapters.push({title:m.title,items:mItems});
+  });
+
+  var totalPages=0;
+  chapters.forEach(function(ch){totalPages+=ch.items.length>0?ch.items.length*3:3;});
+
+  var chHTML=chapters.map(function(ch,ci){
+    var prog=ci===0?33:(ci===1?40:0);
+    var pages=ch.items.length>0?ch.items.length*3:3;
+    var pageRows='';
+    for(var p=0;p<pages;p++){
+      var isCompleted=p===0&&ci<2;
+      var isRecent=p===1&&ci<3;
+      pageRows+='<div style="display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);gap:12px;transition:background .15s;cursor:pointer" onmouseover="this.style.background=\'rgba(255,255,255,.04)\'" onmouseout="this.style.background=\'none\'">'+
+        '<span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.35);width:20px;text-align:center">'+(p+1)+'</span>'+
+        '<div style="flex:1">'+
+          '<div style="font-size:13px;font-weight:600;color:#E2E8F0">페이지</div>'+
+          (isRecent?'<span style="display:inline-block;margin-top:4px;padding:2px 8px;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);border-radius:4px;font-size:10px;font-weight:700;color:#60A5FA">최근 학습</span>':'')+
+        '</div>'+
+        '<div style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;'+(isCompleted?'background:#3B82F6':'background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15)')+'">'+
+          (isCompleted?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'')+
+        '</div>'+
+      '</div>';
+    }
+    return '<div style="margin-bottom:2px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">'+
+      '<div style="display:flex;align-items:center;padding:14px 16px;cursor:pointer;gap:10px" data-action="togpreview" data-idx="'+ci+'">'+
+        '<span style="font-size:13px;font-weight:800;color:rgba(255,255,255,.4);width:22px">'+(ci+1)+'</span>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:14px;font-weight:700;color:#F1F5F9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+ch.title+'</div>'+
+          (isRecent && ci===0?'<span style="display:inline-block;margin-top:4px;padding:2px 8px;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);border-radius:4px;font-size:10px;font-weight:700;color:#60A5FA">최근 학습</span>':'')+
+        '</div>'+
+        '<span style="font-size:12px;font-weight:700;color:'+(prog>0?'#60A5FA':'rgba(255,255,255,.3)')+'">'+prog+'%</span>'+
+        '<span style="font-size:11px;color:rgba(255,255,255,.3);font-weight:600">'+pages+'p</span>'+
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'+
+      '</div>'+
+      '<div>'+pageRows+'</div>'+
+    '</div>';
+  }).join('');
+
+  return '<div class="ovl" data-action="closepreview">'+
+    '<div class="mdl" style="width:420px;max-height:85vh;display:flex;flex-direction:column;background:#0F172A;border:1px solid rgba(255,255,255,.08)" data-stop="1">'+
+      '<div style="padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">'+
+        '<div>'+
+          '<div style="font-size:15px;font-weight:800;color:#F8FAFC">커리큘럼 미리보기</div>'+
+          '<div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;font-weight:600">학습자에게 보이는 화면입니다</div>'+
+        '</div>'+
+        '<button data-action="closepreview" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4)">'+ic('x',14)+'</button>'+
+      '</div>'+
+      '<div style="flex:1;overflow-y:auto;padding:16px">'+chHTML+'</div>'+
+      '<div style="padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;display:flex;justify-content:space-between;align-items:center">'+
+        '<span style="font-size:11px;color:rgba(255,255,255,.3);font-weight:600">총 '+chapters.length+'개 챕터 · '+(totalPages)+'p</span>'+
+        '<button data-action="closepreview" style="padding:7px 16px;background:#3B82F6;border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit">닫기</button>'+
+      '</div>'+
+    '</div></div>';
 }
 
 // ─── EVENT DELEGATION ─────────────────────────────────────────────────────────
@@ -920,11 +1064,52 @@ function handleAppClick(e){
       if(a==='openlib'){upd({libOpen:true});return;}
       if(a==='closelib'){upd({libOpen:false});return;}
       if(a==='setlibcat'){upd({libCat:el.dataset.val});return;}
-      if(a==='opensettings'){upd({setOpen:true,setTitle:el.dataset.title||''});return;}
-      if(a==='closeset'){upd({setOpen:false,setTitle:''});return;}
+      if(a==='opensettings'){upd({setOpen:true,setTitle:el.dataset.title||'',setType:el.dataset.itype||'',setLoc:el.dataset.iloc||''});return;}
+      if(a==='closeset'){upd({setOpen:false,setTitle:'',setType:'',setLoc:''});return;}
+      if(a==='preview'){upd({previewOpen:true});return;}
+      if(a==='closepreview'){upd({previewOpen:false});return;}
       if(a==='reqtog'){el.classList.toggle('rqr');el.classList.toggle('rqo');el.textContent=el.classList.contains('rqr')?'필수':'선택';return;}
       if(a==='removetag'){
         S.tags=S.tags.filter(function(t){return t!==el.dataset.val;});
+        _fullRender=true;upd({});return;
+      }
+      if(a==='addlib'){
+        var filtered=S.libCat==='all'?LIB:LIB.filter(function(i){return i.type===S.libCat;});
+        var item=filtered[parseInt(el.dataset.idx)];
+        if(item){
+          var defCond={video:'진도율 100% · 스킵 방지 ON',doc:'열람 완료 시 이수',exam:'합격 점수 60점 이상',survey:'설문 제출 완료 시 이수'};
+          S.mods.push({
+            id:Date.now(),
+            title:item.t,
+            items:[{title:item.t,type:item.type,sub:item.type.toUpperCase()+' · '+item.time,isReq:true,cond:defCond[item.type]||'완료 시 이수'}]
+          });
+          el.textContent='✓ 추가됨';
+          el.style.borderColor='#A7F3D0';el.style.color='#059669';el.style.background='#F0FDF9';
+          el.style.cursor='default';
+          el.removeAttribute('data-action');
+          el.onmouseover=null;el.onmouseout=null;
+          updateModsContent();
+        }
+        return;
+      }
+      if(a==='uploadlib'){
+        var upTitle='업로드_영상_'+new Date().toISOString().slice(5,10).replace('-','');
+        S.mods.push({
+          id:Date.now(),
+          title:upTitle+'.mp4',
+          items:[{title:upTitle+'.mp4',type:'video',sub:'VIDEO · 업로드 완료',isReq:true,cond:'진도율 100% · 스킵 방지 ON'}]
+        });
+        el.innerHTML=ic('chk',12,'#059669')+' 업로드 완료!';
+        el.style.borderColor='#A7F3D0';el.style.color='#059669';el.style.background='#F0FDF9';
+        setTimeout(function(){
+          el.innerHTML=ic('up',12)+' PC에서 파일 업로드';
+          el.style.borderColor='#E2E8F0';el.style.color='#334155';el.style.background='#F8FAFC';
+        },1500);
+        updateModsContent();
+        return;
+      }
+      if(a==='removerm'){
+        S.rmItems=S.rmItems.filter(function(r){return r.id!==el.dataset.rid;});
         _fullRender=true;upd({});return;
       }
       return;
@@ -934,7 +1119,6 @@ function handleAppClick(e){
 }
 
 function bind(){
-  // Click delegation: bind ONCE only
   if(!_clickBound){
     document.getElementById('app').addEventListener('click', handleAppClick);
     _clickBound = true;
