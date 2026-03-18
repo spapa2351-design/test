@@ -1,60 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>터치클래스 차세대 코스 구조 변경</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>터치클래스 차세대 코스 구조</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4f46e5; /* 세련된 인디고 블루 */
+            --primary-hover: #4338ca;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --card-bg: #ffffff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f2f2f2;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
         }
 
         h1 {
-            color: #333;
-            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: #64748b;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        /* 버튼들을 담는 그리드 레이아웃 (반응형) */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
         }
 
         button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            color: var(--text);
+            padding: 20px 24px;
             font-size: 16px;
-            margin: 10px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 16px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
         }
 
+        /* 버튼 호버 효과 */
         button:hover {
-            background-color: #45a049;
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 25px -5px rgb(79 70 229 / 0.1), 0 8px 10px -6px rgb(79 70 229 / 0.1);
+            background-color: #fefeff;
+        }
+
+        button::after {
+            content: '→';
+            font-size: 1.2rem;
+            color: var(--primary);
+            transition: transform 0.2s;
+        }
+
+        button:hover::after {
+            transform: translateX(5px);
+        }
+
+        /* 동적으로 추가되는 버튼 스타일을 위한 ID/클래스 처리 가능 */
+        .dynamic-btn {
+            background: #f1f5f9;
+            border-style: dashed;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .button-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <h1>터치클래스 차세대 코스 구조 변경</h1>
-    <button onclick="location.href='0.html'">코스등록 UI 안</button>
-    <button onclick="location.href='1.html'">"차세대 LMS 아키텍처 도입 흐름도"</button>
-    <button onclick="location.href='2.html'">운영 업무가 어떻게 가벼워지는가?</button>
-    
+    <div class="container">
+        <h1>Next-Gen Course</h1>
+        <p class="subtitle">터치클래스 차세대 코스 구조 변경안 대시보드</p>
+        
+        <div class="button-grid" id="mainGrid">
+            <button onclick="location.href='0.html'">코스등록 UI 안</button>
+            <button onclick="location.href='1.html'">LMS 아키텍처 흐름도</button>
+            <button onclick="location.href='2.html'">운영 업무 효율화 방안</button>
+        </div>
+    </div>
+
     <script>
-        function addButton(filename) {
-            var newButton = document.createElement("button");
-            newButton.textContent = filename;
-            newButton.onclick = function() {
-                location.href = filename;
-            };
-            document.body.appendChild(newButton);
-        }
+        const grid = document.getElementById('mainGrid');
+        const fileList = ["4.html", "5.html", "6.html", "7.html", "8.html"];
 
-        var fileList = ["4.html", "5.html", "6.html", "7.html", "8.html"];
-
-        for (var i = 0; i < fileList.length; i++) {
-            addButton(fileList[i]);
-        }
+        fileList.forEach(filename => {
+            const btn = document.createElement("button");
+            btn.className = "dynamic-btn";
+            btn.textContent = `추가 리소스: ${filename}`;
+            btn.onclick = () => location.href = filename;
+            grid.appendChild(btn);
+        });
     </script>
 </body>
 </html>
