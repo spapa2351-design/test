@@ -251,6 +251,19 @@ body.is-dragging .rmis{pointer-events:all!important}
   background:#EEF2FF !important;
 }
 
+
+/* ── Viewer Modal ── */
+.viewer-wrap{display:flex;height:100%;overflow:hidden;flex-direction:row}
+.viewer-sidebar{width:260px;background:#F8FAFC;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;order:2;border-left:1px solid #E2E8F0}
+.viewer-main{flex:1;background:#fff;display:flex;flex-direction:column;overflow:hidden;order:1}
+.viewer-chapter{border-bottom:1px solid #F1F5F9}
+.viewer-chapter-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none;background:#F8FAFC}
+.viewer-chapter-hdr:hover{background:#EEF2FF}
+.viewer-item{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 34px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
+.viewer-item:hover{background:#F5F7FF}
+.viewer-item.active{background:#EEF2FF;border-left:3px solid #4F46E5 !important}
+@keyframes vidPulse{0%,100%{opacity:1}50%{opacity:.6}}
+
 /* ── Calendar ── */
 .cal-day{transition:transform .12s ease,box-shadow .12s ease}
 .cal-day-has{position:relative}
@@ -315,7 +328,7 @@ var S = {
   tags:['신입사원','2026년 3월','온보딩'],
   batchPlace:'',
   previewOpen:false,
-  offItems:[], _libTargetChId:'ch-0', attendanceOpen:false, attendanceSid:null, quickUploadOpen:false, quickUploadFiles:[], quickUploadMode:null, expandedSid:null,
+  offItems:[], _libTargetChId:'ch-0', attendanceOpen:false, attendanceSid:null, quickUploadOpen:false, quickUploadFiles:[], quickUploadMode:null, expandedSid:null, viewerOpen:false, viewerPage:0,
   rmItems:[]
 };
 
@@ -615,7 +628,9 @@ var IC={
   clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
   award:'<circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>',
   copy:'<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
-  bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>'
+  bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  monitor:'<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>'
 };
 function ic(n,sz,col){
   var f=n==='zap'||n==='star'?'currentColor':'none';
@@ -681,6 +696,7 @@ function editorHTML(){
     (S.previewOpen?previewModalHTML():'')+
     (S.attendanceOpen?attendanceModalHTML():'')+
     (S.quickUploadOpen?quickUploadModalHTML():'')+
+    (S.viewerOpen?viewerModalHTML():'')+
     '</div>';
 }
 
@@ -1767,7 +1783,7 @@ function freeRoadmapHTML(){
     '</div>'+
     '<div class="rmf">'+
       '<button class="rmt" data-action="openlib">'+ic('plus',13)+' 학습 항목 추가</button>'+
-      '<button class="rmt">'+ic('rot',13)+' 기존 코스 링크</button></div>';
+      '<button class="rmt" data-action="openviewer">'+ic('eye',13)+' 학습 뷰어 미리보기</button></div>';
 }
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
@@ -1846,6 +1862,25 @@ function setModalHTML(){
               '</div></div></div></div>'+
         '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px">이수 기준</div>'+
         criteriaSection+
+        // 의견 기능 공통 섹션
+        '<div style="border-top:1px solid #F1F5F9;padding-top:16px;margin-top:4px">'+
+          '<div style="font-size:13px;font-weight:800;margin-bottom:14px">커뮤니티 기능</div>'+
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">'+
+            '<div style="flex:1;margin-right:16px">'+
+              '<div style="font-size:13px;font-weight:600;color:#0F172A">의견 기능 사용</div>'+
+              '<div style="font-size:11px;color:#94A3B8;margin-top:3px;line-height:1.6">학습자가 이 항목에 의견·질문을 남길 수 있습니다.<br>다른 학습자의 의견도 함께 볼 수 있습니다.</div>'+
+              '<span id="set-opinion-status" style="display:inline-block;margin-top:5px;font-size:10px;font-weight:700;color:#4F46E5;background:#EEF2FF;padding:2px 8px;border-radius:99px;border:1px solid #C7D2FE">사용 중</span>'+
+            '</div>'+
+            '<button class="tog on" data-action="setopiniontog" data-key="opinion" style="flex-shrink:0;margin-top:2px"></button>'+
+          '</div>'+
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
+            '<div style="flex:1;margin-right:16px">'+
+              '<div style="font-size:13px;font-weight:600;color:#0F172A">익명 의견 허용</div>'+
+              '<div style="font-size:11px;color:#94A3B8;margin-top:3px">이름을 숨기고 의견을 남길 수 있습니다</div>'+
+            '</div>'+
+            '<button class="tog" data-action="setopiniontog" data-key="anon" style="flex-shrink:0;margin-top:2px"></button>'+
+          '</div>'+
+        '</div>'+
       '</div>'+
       '<div class="mf">'+
         '<button data-action="closeset" class="btn bs2" style="padding:8px 16px;font-size:12px">취소</button>'+
@@ -1911,6 +1946,280 @@ function libModalHTML(){
             '<span style="font-size:12px;color:#94A3B8">원하는 항목이 없나요?</span>'+
             '<button data-action="uploadlib" style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#334155;cursor:pointer;font-family:inherit;transition:all .15s">'+ic('up',12)+' PC에서 파일 업로드</button></div>'+
         '</div></div></div></div>';
+}
+
+// 페이지별 샘플 데이터
+var VIEWER_PAGES = [
+  {type:'video',   title:'신입사원 환영사 및 비전 공유', sub:'Video · 15:00',   cond:'진도율 100% · 최소 15분 · 스킵 방지 ON', hasOpinion:true},
+  {type:'article', title:'2026년 핵심가치 가이드북',    sub:'아티클 · 읽기 자료', cond:'전체 열람 완료 시 이수',                 hasOpinion:false},
+];
+
+// 사이드바 탭 상태 (뷰어 내부 state)
+var _viewerTab = 'curriculum'; // 'curriculum' | 'opinion'
+
+function buildViewerPageHTML(page){
+  var pg      = VIEWER_PAGES[page] || VIEWER_PAGES[0];
+  var isFirst = page === 0;
+  var isLast  = page === VIEWER_PAGES.length - 1;
+
+  var bodyHTML = '';
+
+  if(pg.type === 'video'){
+    // ── 영상 뷰어 ────────────────────────────────────────────────────
+    bodyHTML = ''
+      // 타이틀
+      +'<div style="padding:16px 22px 10px;flex-shrink:0;border-bottom:1px solid #F1F5F9">'
+        +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">'
+          +'<span style="font-size:9px;font-weight:700;color:#4F46E5;background:#EEF2FF;padding:2px 8px;border-radius:99px;border:1px solid #C7D2FE">🎬 동영상</span>'
+          +'<span style="font-size:10px;color:#94A3B8">15:00</span>'
+        +'</div>'
+        +'<div style="font-size:15px;font-weight:800;color:#0F172A">'+pg.title+'</div>'
+      +'</div>'
+      // 플레이어
+      +'<div style="padding:14px 22px;flex:1;display:flex;flex-direction:column;overflow:hidden">'
+        +'<div style="position:relative;background:#1E293B;border-radius:14px;overflow:hidden;flex:1;max-height:300px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(15,23,42,.15)">'
+          +'<div style="position:absolute;inset:0;background:linear-gradient(135deg,#1E1B4B,#312E81,#1E293B)">'
+            +'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">'
+              +'<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.22)\'" onmouseout="this.style.background=\'rgba(255,255,255,.12)\'">'
+                +'<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+              +'</div>'
+            +'</div>'
+          +'</div>'
+          // 컨트롤
+          +'<div style="position:absolute;bottom:0;left:0;right:0;padding:8px 14px 12px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent)">'
+            +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">'
+              +'<span style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600">0:00</span>'
+              +'<div style="flex:1;height:3px;background:rgba(255,255,255,.2);border-radius:99px;position:relative">'
+                +'<div style="height:100%;width:0%;background:#818CF8;border-radius:99px"></div>'
+                +'<div style="position:absolute;left:0%;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 6px rgba(129,140,248,.9)"></div>'
+              +'</div>'
+              +'<span style="font-size:10px;color:rgba(255,255,255,.35)">15:00</span>'
+            +'</div>'
+            +'<div style="display:flex;align-items:center;gap:8px">'
+              +'<span style="font-size:17px;cursor:pointer;opacity:.8">▶</span>'
+              +'<span style="font-size:11px;color:rgba(255,255,255,.4)">🔊</span>'
+              +'<div style="width:44px;height:3px;background:rgba(255,255,255,.2);border-radius:99px"><div style="width:70%;height:100%;background:rgba(255,255,255,.6);border-radius:99px"></div></div>'
+              +'<div style="flex:1"></div>'
+              +'<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px">1.0x</span>'
+              +'<div style="display:flex;align-items:center;gap:3px;padding:2px 7px;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);border-radius:4px">'
+                +'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+                +'<span style="font-size:9px;font-weight:700;color:#EF4444">스킵 방지</span>'
+              +'</div>'
+            +'</div>'
+          +'</div>'
+        +'</div>'
+        // 이수 조건
+        +'<div style="margin-top:10px;padding:9px 13px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:10px;display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +'<div style="width:30px;height:30px;border-radius:8px;background:#fff;border:1px solid #C7D2FE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:14px">📋</span></div>'
+          +'<div style="flex:1"><div style="font-size:10px;font-weight:700;color:#4F46E5">이수 조건</div>'
+            +'<div style="font-size:9px;color:#6366F1;margin-top:1px">'+pg.cond+'</div></div>'
+          +'<div style="text-align:right;flex-shrink:0"><div style="font-size:17px;font-weight:800;color:#4F46E5">0%</div><div style="font-size:9px;color:#94A3B8;font-weight:600">진도율</div></div>'
+        +'</div>'
+        // 메모
+        +'<div style="margin-top:8px;padding:9px 13px;background:#FAFBFC;border:1px solid #E2E8F0;border-radius:10px;flex-shrink:0">'
+          +'<div style="font-size:10px;font-weight:700;color:#94A3B8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">학습 메모</div>'
+          +'<div style="font-size:11px;color:#CBD5E1;font-style:italic">이 영역에 학습 중 메모를 남길 수 있습니다...</div>'
+        +'</div>'
+      +'</div>';
+
+  } else if(pg.type === 'article'){
+    // ── 아티클 뷰어 (심플) ────────────────────────────────────────────
+    bodyHTML = ''
+      // 타이틀
+      +'<div style="padding:18px 24px 14px;flex-shrink:0;border-bottom:1px solid #F1F5F9">'
+        +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
+          +'<span style="font-size:9px;font-weight:700;color:#0891B2;background:#E0F2FE;padding:2px 8px;border-radius:99px;border:1px solid #BAE6FD">📄 아티클</span>'
+          +'<span style="font-size:10px;color:#94A3B8">읽기 약 5분</span>'
+        +'</div>'
+        +'<div style="font-size:16px;font-weight:800;color:#0F172A;line-height:1.4;margin-bottom:8px">'+pg.title+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+          +'<div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff">HR</div>'
+          +'<span style="font-size:11px;color:#64748B;font-weight:600">인사팀</span>'
+          +'<span style="font-size:10px;color:#94A3B8">2026.03.01</span>'
+        +'</div>'
+      +'</div>'
+      // 본문 스크롤 — 이미지 + 단순 텍스트
+      +'<div style="flex:1;overflow-y:auto;padding:20px 24px">'
+        // 이미지
+        +'<div style="border-radius:12px;overflow:hidden;margin-bottom:20px;background:linear-gradient(135deg,#EEF2FF,#F5F3FF);height:180px;display:flex;align-items:center;justify-content:center;border:1px solid #E0E7FF">'
+          +'<div style="text-align:center">'
+            +'<div style="font-size:44px;margin-bottom:8px">🏢</div>'
+            +'<div style="font-size:12px;font-weight:700;color:#6366F1">2026 핵심가치 프레임워크</div>'
+            +'<div style="font-size:10px;color:#A5B4FC;margin-top:3px">출처: 인사팀 내부 자료</div>'
+          +'</div>'
+        +'</div>'
+        // 단순 텍스트
+        +'<p style="font-size:13px;color:#334155;line-height:1.9;margin:0 0 14px">우리 회사의 핵심가치는 단순한 슬로건이 아닙니다. 매일의 업무 속에서 실천되어야 할 살아있는 기준입니다.</p>'
+        +'<p style="font-size:13px;color:#334155;line-height:1.9;margin:0 0 14px">고객 중심 사고란, 모든 의사결정의 출발점을 고객에게 두는 것입니다. 내부 프로세스나 효율보다 고객이 경험하는 가치를 먼저 고려해야 합니다.</p>'
+        +'<p style="font-size:13px;color:#334155;line-height:1.9;margin:0 0 14px">투명한 소통은 좋은 소식뿐 아니라 나쁜 소식도 빠르게 공유하는 문화에서 시작됩니다. 실수를 숨기기보다 빠른 공유와 학습으로 전환하는 것이 팀 전체의 성장을 이끕니다.</p>'
+        +'<p style="font-size:13px;color:#334155;line-height:1.9;margin:0 0 14px">빠른 실행과 학습은 완벽한 계획보다 빠른 피드백 루프를 중시하는 방식입니다. 2주 스프린트 단위로 목표를 설정하고, 매 스프린트 종료 시 회고를 통해 개선점을 도출합니다.</p>'
+        +'<p style="font-size:13px;color:#334155;line-height:1.9;margin:0">이 가이드북을 통해 6가지 핵심가치를 업무 현장에서 자연스럽게 실천하는 방법을 익히시기 바랍니다.</p>'
+      +'</div>'
+      // 이수 조건
+      +'<div style="padding:0 24px 12px;flex-shrink:0">'
+        +'<div style="padding:9px 13px;background:#E0F2FE;border:1px solid #BAE6FD;border-radius:10px;display:flex;align-items:center;gap:10px">'
+          +'<div style="width:30px;height:30px;border-radius:8px;background:#fff;border:1px solid #BAE6FD;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:14px">📋</span></div>'
+          +'<div style="flex:1"><div style="font-size:10px;font-weight:700;color:#0891B2">이수 조건</div>'
+            +'<div style="font-size:9px;color:#0E7490;margin-top:1px">'+pg.cond+'</div></div>'
+          +'<div style="display:flex;align-items:center;gap:5px">'
+            +'<div style="width:52px;height:4px;background:rgba(8,145,178,.15);border-radius:99px;overflow:hidden"><div style="width:30%;height:100%;background:#0891B2;border-radius:99px"></div></div>'
+            +'<span style="font-size:9px;font-weight:700;color:#0891B2">30%</span>'
+          +'</div>'
+        +'</div>'
+      +'</div>';
+  }
+
+  // 하단 네비
+  var navHTML = '<div style="padding:11px 20px;border-top:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#FAFBFD">'
+    +'<button data-action="viewernav" data-dir="prev" style="padding:7px 14px;background:#fff;border:1.5px solid #E2E8F0;border-radius:8px;font-size:11px;font-weight:700;color:'+(isFirst?'#CBD5E1':'#64748B')+';cursor:'+(isFirst?'default':'pointer')+';font-family:inherit;'+(isFirst?'opacity:.5':'')+'">← 이전</button>'
+    +'<div style="display:flex;align-items:center;gap:5px">'
+      +VIEWER_PAGES.map(function(_,i){
+        return '<div style="width:'+(i===page?'18px':'6px')+';height:6px;border-radius:99px;background:'+(i===page?'#4F46E5':'#E2E8F0')+';transition:all .25s"></div>';
+      }).join('')
+    +'</div>'
+    +'<button data-action="viewernav" data-dir="next" style="padding:7px 18px;background:'+(isLast?'#059669':'#4F46E5')+';border:none;border-radius:8px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px '+(isLast?'rgba(5,150,105,.3)':'rgba(79,70,229,.3)')+';">'
+      +(isLast?'✓ 학습 완료':'다음 →')
+    +'</button>'
+  +'</div>';
+
+  return bodyHTML + navHTML;
+}
+
+// 사이드바 탭 렌더
+function buildViewerSidebarHTML(page, tab){
+  var pg         = VIEWER_PAGES[page] || VIEWER_PAGES[0];
+  var showOpinion= pg.hasOpinion;
+  var activeTab  = showOpinion ? tab : 'curriculum';
+
+  var ITYPE = {video:{icon:'🎬',label:'VOD'},article:{icon:'📄',label:'아티클'},exam:{icon:'📝',label:'시험'},survey:{icon:'📊',label:'설문'}};
+  var totalItems = VIEWER_PAGES.length;
+  var pct = Math.round((page+1)/totalItems*100);
+
+  // 탭 바
+  var tabBarHTML = showOpinion
+    ? '<div style="display:flex;border-bottom:1px solid #F1F5F9;flex-shrink:0">'
+        +'<button data-action="viewertab" data-tab="curriculum" style="flex:1;padding:10px 0;font-size:11px;font-weight:700;color:'+(activeTab==='curriculum'?'#4F46E5':'#94A3B8')+';background:none;border:none;border-bottom:2px solid '+(activeTab==='curriculum'?'#4F46E5':'transparent')+';cursor:pointer;font-family:inherit;transition:all .15s">커리큘럼</button>'
+        +'<button data-action="viewertab" data-tab="opinion" style="flex:1;padding:10px 0;font-size:11px;font-weight:700;color:'+(activeTab==='opinion'?'#4F46E5':'#94A3B8')+';background:none;border:none;border-bottom:2px solid '+(activeTab==='opinion'?'#4F46E5':'transparent')+';cursor:pointer;font-family:inherit;transition:all .15s">의견</button>'
+      +'</div>'
+    : '<div style="padding:10px 14px 0;border-bottom:1px solid #F1F5F9;flex-shrink:0">'
+        +'<div style="font-size:11px;font-weight:800;color:#0F172A">커리큘럼</div>'
+      +'</div>';
+
+  // 커리큘럼 탭 내용
+  var curriculumHTML = '<div style="padding:10px 14px 6px;flex-shrink:0">'
+    +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<div style="flex:1;height:3px;background:#F1F5F9;border-radius:99px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct+'%;background:#4F46E5;border-radius:99px;transition:width .4s"></div>'
+      +'</div>'
+      +'<span style="font-size:9px;font-weight:700;color:#94A3B8">'+(page+1)+'/'+totalItems+'</span>'
+    +'</div>'
+  +'</div>'
+  +'<div style="flex:1;overflow-y:auto">'
+    +'<div class="viewer-chapter" style="border-bottom:1px solid #F1F5F9">'
+      +'<div class="viewer-chapter-hdr">'
+        +'<div style="width:20px;height:20px;border-radius:6px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+          +'<span style="font-size:8px;font-weight:800;color:#4F46E5">01</span>'
+        +'</div>'
+        +'<span style="font-size:11px;font-weight:700;color:#0F172A;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">샘플 커리큘럼</span>'
+        +'<span style="font-size:9px;color:#94A3B8;font-weight:600">'+totalItems+'p</span>'
+      +'</div>'
+      +VIEWER_PAGES.map(function(p,ii){
+        var mt = ITYPE[p.type] || {icon:'📄',label:'항목'};
+        var isActive = ii === page;
+        var isDone   = ii < page;
+        return '<div class="viewer-item'+(isActive?' active':'')+'" data-action="viewergo" data-page="'+ii+'" style="border-left:3px solid '+(isActive?'#4F46E5':'transparent')+'">'
+          +'<span style="font-size:12px;flex-shrink:0">'+mt.icon+'</span>'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:11px;font-weight:'+(isActive?'700':'500')+';color:'+(isActive?'#0F172A':isDone?'#64748B':'#94A3B8')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.title+'</div>'
+            +'<div style="font-size:9px;color:#CBD5E1;margin-top:1px;text-transform:uppercase;font-weight:600">'+mt.label+'</div>'
+          +'</div>'
+          +(isActive
+            ? '<div style="width:6px;height:6px;border-radius:50%;background:#4F46E5;flex-shrink:0"></div>'
+            : isDone
+              ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'
+              : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E2E8F0" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>')
+        +'</div>';
+      }).join('')
+    +'</div>'
+  +'</div>';
+
+  // 의견 탭 내용 (더미)
+  var SAMPLE_OPINIONS = [
+    {name:'김민준', time:'2시간 전', avatar:'K', color:'#4F46E5', text:'핵심가치 중 고객 중심 사고 부분이 특히 공감됩니다. 실무에서 자주 놓치는 부분이에요.', likes:5},
+    {name:'이서연', time:'5시간 전', avatar:'L', color:'#7C3AED', text:'영상 퀄리티가 좋네요. 비전 공유 내용이 실질적으로 도움이 됐습니다!', likes:3},
+    {name:'박지호', time:'1일 전',  avatar:'P', color:'#059669', text:'조금 더 구체적인 사례가 있었으면 좋겠어요. 그 외엔 이해하기 쉬운 영상이었습니다.', likes:1},
+  ];
+
+  var opinionHTML = '<div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">'
+    // 입력창
+    +'<div style="padding:10px 12px;border-bottom:1px solid #F1F5F9;flex-shrink:0">'
+      +'<div style="display:flex;gap:8px;align-items:flex-start">'
+        +'<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">나</div>'
+        +'<div style="flex:1">'
+          +'<textarea placeholder="의견을 남겨보세요..." rows="2" style="width:100%;resize:none;border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:11px;color:#334155;font-family:inherit;outline:none;background:#F8FAFC;box-sizing:border-box" onfocus="this.style.borderColor=\'#4F46E5\'" onblur="this.style.borderColor=\'#E2E8F0\'"></textarea>'
+          +'<div style="display:flex;justify-content:flex-end;margin-top:4px">'
+            +'<button style="padding:4px 12px;background:#4F46E5;border:none;border-radius:6px;font-size:10px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit">등록</button>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+    // 의견 목록
+    +'<div style="padding:8px 12px;display:flex;flex-direction:column;gap:10px">'
+      +SAMPLE_OPINIONS.map(function(op){
+        return '<div style="display:flex;gap:8px;align-items:flex-start">'
+          +'<div style="width:26px;height:26px;border-radius:50%;background:'+op.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">'+op.avatar+'</div>'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">'
+              +'<span style="font-size:11px;font-weight:700;color:#0F172A">'+op.name+'</span>'
+              +'<span style="font-size:9px;color:#CBD5E1">'+op.time+'</span>'
+            +'</div>'
+            +'<div style="font-size:11px;color:#475569;line-height:1.6">'+op.text+'</div>'
+            +'<div style="display:flex;align-items:center;gap:4px;margin-top:5px">'
+              +'<button style="display:flex;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-size:10px;color:#94A3B8;font-family:inherit;padding:0">👍 '+op.likes+'</button>'
+              +'<button style="background:none;border:none;cursor:pointer;font-size:10px;color:#94A3B8;font-family:inherit;padding:0 6px">답글</button>'
+            +'</div>'
+          +'</div>'
+        +'</div>';
+      }).join('')
+    +'</div>'
+  +'</div>';
+
+  var tabContent = activeTab === 'opinion' ? opinionHTML : curriculumHTML;
+
+  return tabBarHTML + tabContent;
+}
+
+function viewerModalHTML(){
+  var page = S.viewerPage || 0;
+  var tab  = _viewerTab || 'curriculum';
+  var pg   = VIEWER_PAGES[page] || VIEWER_PAGES[0];
+  var pct  = Math.round((page+1)/VIEWER_PAGES.length*100);
+
+  return '<div class="ovl" data-action="closeviewer" style="align-items:stretch;padding:0">'
+    +'<div style="width:100%;max-width:1060px;height:90vh;margin:auto;background:#fff;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px rgba(15,23,42,.18);border:1px solid #E2E8F0" data-stop="1">'
+
+      // 헤더
+      +'<div style="height:52px;background:#fff;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0">'
+        +'<div style="width:28px;height:28px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('monitor',13,'#4F46E5')+'</div>'
+        +'<div>'
+          +'<div style="font-size:12px;font-weight:800;color:#0F172A">학습 뷰어 미리보기</div>'
+          +'<div style="font-size:10px;color:#94A3B8;font-weight:600">학습자에게 보이는 화면</div>'
+        +'</div>'
+        +'<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px">'
+          +'<div style="width:140px;height:4px;background:#F1F5F9;border-radius:99px;overflow:hidden">'
+            +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#4F46E5,#7C3AED);border-radius:99px;transition:width .4s"></div>'
+          +'</div>'
+          +'<span style="font-size:10px;font-weight:700;color:#94A3B8">'+(page+1)+' / '+VIEWER_PAGES.length+'</span>'
+        +'</div>'
+        +'<button data-action="closeviewer" style="width:28px;height:28px;border-radius:8px;background:#F1F5F9;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748B">'+ic('x',13)+'</button>'
+      +'</div>'
+
+      // 본문
+      +'<div class="viewer-wrap">'
+        +'<div class="viewer-main" id="viewer-main-content">'+buildViewerPageHTML(page)+'</div>'
+        +'<div class="viewer-sidebar" id="viewer-sidebar-content" style="display:flex;flex-direction:column">'+buildViewerSidebarHTML(page, tab)+'</div>'
+      +'</div>'
+    +'</div></div>';
 }
 
 function quickUploadModalHTML(){
@@ -2406,7 +2715,54 @@ function handleAppClick(e){
         return;
       }
       if(a==='opensettings'){upd({setOpen:true,setTitle:el.dataset.title||'',setType:el.dataset.itype||'',setLoc:el.dataset.iloc||''});return;}
+      if(a==='setopiniontog'){
+        el.classList.toggle('on');
+        if(el.dataset.key === 'opinion'){
+          var isOn = el.classList.contains('on');
+          var badge = document.getElementById('set-opinion-status');
+          if(badge){
+            badge.textContent = isOn ? '사용 중' : '사용 안 함';
+            badge.style.color = isOn ? '#4F46E5' : '#94A3B8';
+            badge.style.background = isOn ? '#EEF2FF' : '#F8FAFC';
+            badge.style.borderColor = isOn ? '#C7D2FE' : '#E2E8F0';
+          }
+        }
+        return;
+      }
       if(a==='closeset'){upd({setOpen:false,setTitle:'',setType:'',setLoc:''});return;}
+      if(a==='openviewer'){
+        S.viewerOpen=true;
+        S.viewerPage=0;
+        _fullRender=false; render();
+        return;
+      }
+      if(a==='closeviewer'){
+        S.viewerOpen=false;
+        _fullRender=false; render();
+        return;
+      }
+      if(a==='viewernav'){
+        var dir = el.dataset.dir;
+        var maxPage = VIEWER_PAGES.length - 1;
+        if(dir==='next') S.viewerPage = Math.min(S.viewerPage+1, maxPage);
+        if(dir==='prev') S.viewerPage = Math.max(S.viewerPage-1, 0);
+        // 페이지 이동 시 의견 탭 있는 페이지면 유지, 없으면 커리큘럼으로
+        if(!VIEWER_PAGES[S.viewerPage].hasOpinion) _viewerTab='curriculum';
+        _refreshViewer();
+        return;
+      }
+      if(a==='viewergo'){
+        var gp = parseInt(el.dataset.page);
+        if(!isNaN(gp)){ S.viewerPage=gp; if(!VIEWER_PAGES[S.viewerPage].hasOpinion) _viewerTab='curriculum'; }
+        _refreshViewer();
+        return;
+      }
+      if(a==='viewertab'){
+        _viewerTab = el.dataset.tab;
+        var sb = document.getElementById('viewer-sidebar-content');
+        if(sb) sb.innerHTML = buildViewerSidebarHTML(S.viewerPage, _viewerTab);
+        return;
+      }
       if(a==='preview'){upd({previewOpen:true});return;}
       if(a==='openquickupload'){
         S.quickUploadOpen=true;
@@ -2889,6 +3245,13 @@ function handleQuickUploadFiles(input){
   S.quickUploadFiles = S.quickUploadFiles.concat(fileList);
   var wq = document.querySelector('.qu-modal-wrap');
   if(wq) wq.innerHTML = quickUploadModalHTML();
+}
+
+function _refreshViewer(){
+  var vm = document.getElementById('viewer-main-content');
+  if(vm) vm.innerHTML = buildViewerPageHTML(S.viewerPage);
+  var sb = document.getElementById('viewer-sidebar-content');
+  if(sb) sb.innerHTML = buildViewerSidebarHTML(S.viewerPage, _viewerTab);
 }
 
 function bind(){
