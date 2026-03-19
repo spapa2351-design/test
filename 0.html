@@ -2,29 +2,28 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TouchClass</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#0F172A;overflow:hidden;}
-:root{--b:#4F46E5;--bl:#EEF2FF;--bd:#4338CA;--g:#10B981;--r:#EF4444;--bo:#E2E8F0;--bg:#F8FAFC;--tx:#0F172A;--mu:#64748B;--fa:#94A3B8;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#0F172A;overflow:hidden}
+:root{--b:#4F46E5;--bl:#EEF2FF;--bd:#4338CA;--g:#10B981;--bo:#E2E8F0;--tx:#0F172A;--mu:#64748B;--fa:#94A3B8}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:4px}
+
+/* no fade animations on re-render — only on first load */
+.sel-enter{animation:fadeUp .28s both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.au{animation:fadeUp .28s both}.ai{animation:fadeIn .2s both}
-.d1{animation-delay:.06s}.d2{animation-delay:.1s}.d3{animation-delay:.16s}
-
-/* scrollbars */
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:4px}
 
 /* layout */
 #app{height:100vh;display:flex;flex-direction:column}
 .hdr{height:56px;background:#fff;border-bottom:1px solid var(--bo);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0}
 .body{flex:1;display:flex;overflow:hidden}
-.lp{flex:1;overflow-y:auto;padding:24px 32px;background:var(--bg)}
+.lp{flex:1;overflow-y:auto;padding:24px 32px;background:#F8FAFC}
 .li{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-bottom:80px}
 .rp{width:380px;background:#fff;border-left:1px solid var(--bo);display:flex;flex-direction:column;overflow:hidden}
 
-/* cards */
+/* card */
 .card{background:#fff;border-radius:14px;border:1px solid var(--bo);padding:22px 24px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
 .ct{font-size:15px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:8px}
 
@@ -71,13 +70,10 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .stbl td{padding:8px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
 .stbl tr:last-child td{border-bottom:none}
 .stbl tbody tr:hover td{background:#FAFBFF}
-
-/* batch btn */
 .bbt{width:100%;padding:13px;background:#0F172A;color:#fff;font-weight:800;font-size:14px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
 .bbt:hover{background:#1E293B}
 
-/* day btns */
-.dw{display:flex;gap:5px}
+/* day */
 .db{width:34px;height:34px;border-radius:50%;font-size:12px;font-weight:700;border:1.5px solid var(--bo);background:#fff;color:var(--mu);cursor:pointer;font-family:inherit;transition:all .15s}
 .db.on{background:var(--b);color:#fff;border-color:var(--b)}
 
@@ -87,43 +83,65 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .rmf{padding:13px 16px;border-top:1px solid #F1F5F9;background:#FAFBFD;display:flex;gap:8px;flex-shrink:0}
 .rmt{flex:1;padding:9px;background:#fff;border:1.5px solid var(--bo);border-radius:10px;font-size:11px;font-weight:700;color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;transition:all .15s}
 .rmt:hover{border-color:var(--b);color:var(--b)}
+
+/* chapter */
 .rmc{position:relative;margin-bottom:22px}
 .rmcl{position:absolute;left:11px;top:28px;bottom:-8px;width:2px;background:linear-gradient(to bottom,#E2E8F0 80%,transparent)}
 .rmch{display:flex;align-items:center;gap:8px;margin-bottom:12px;position:relative;z-index:1}
 .rmn{width:24px;height:24px;background:#0F172A;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:800;color:#fff}
 .rmis{padding-left:28px;display:flex;flex-direction:column;gap:8px}
+
+/* rm node */
 .rmi{position:relative}
 .rmi::before{content:'';position:absolute;left:-17px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #CBD5E1;z-index:1}
 .rmi.nb::before{border-color:var(--b)}
 .rmi.ng::before{border-color:var(--g)}
-.rmic{background:#fff;border:1px solid var(--bo);border-radius:12px;padding:11px 13px;transition:all .15s;cursor:pointer}
-.rmic:hover{border-color:var(--b);transform:translateX(2px)}
+.rmic{background:#fff;border:1px solid var(--bo);border-radius:12px;padding:11px 13px;transition:border-color .15s,transform .15s;cursor:default;position:relative}
+.rmic:hover{border-color:var(--b)}
 .rmic.gi{border-color:#A7F3D0;background:#F0FDF9}
+
+/* drag states */
+.rmi.dragging .rmic{opacity:.4;border-style:dashed}
+.rmi.drag-over .rmic{border-color:var(--b);background:#F5F7FF;transform:translateY(-2px)}
+.drag-handle{cursor:grab;color:#CBD5E1;display:flex;align-items:center;flex-shrink:0;padding:2px}
+.drag-handle:active{cursor:grabbing}
+.drag-handle:hover{color:var(--mu)}
+
+/* req btn */
 .rqb{font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .15s}
 .rqr{background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE}
 .rqo{background:#F8FAFC;color:var(--fa);border-color:var(--bo)}
+
+/* del btn on hover */
+.rm-del{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#CBD5E1;opacity:0;transition:opacity .15s,color .15s;z-index:2;padding:0}
+.rmic:hover .rm-del{opacity:1}
+.rm-del:hover{color:var(--r,#EF4444)!important;background:#FEF2F2}
+
+/* condition bar */
 .cb{background:#F8FAFC;border:1px solid var(--bo);border-radius:8px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-top:8px}
 .cb:hover{border-color:var(--b)}
 
 /* modal */
-.ovl{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;z-index:200}
+.ovl{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;z-index:200;animation:fadeIn .2s both}
 .mdl{background:#fff;border-radius:20px;box-shadow:0 24px 80px rgba(15,23,42,.25);overflow:hidden;animation:fadeUp .28s both}
 .mh{padding:17px 22px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#FAFBFD}
 .mf{padding:14px 22px;border-top:1px solid #F1F5F9;background:#FAFBFD;display:flex;justify-content:flex-end;gap:8px}
-.mb{padding:22px;overflow-y:auto;max-height:56vh}
+.mb2{padding:22px;overflow-y:auto;max-height:60vh}
 
-/* lib modal */
+/* lib */
 .lbm{width:min(820px,92vw);height:560px;display:flex;flex-direction:column}
 .lbs{display:flex;flex:1;overflow:hidden}
 .lbsd{width:150px;border-right:1px solid #F1F5F9;background:#FAFBFD;padding:12px;flex-shrink:0}
 .lbmn{flex:1;display:flex;flex-direction:column;padding:20px;overflow:hidden}
 .lbl{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.lbc{width:100%;text-align:left;padding:8px 10px;border-radius:8px;font-size:13px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:var(--mu);font-weight:500;display:block}
+.lbc{width:100%;text-align:left;padding:8px 10px;border-radius:8px;font-size:13px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:var(--mu);font-weight:500;display:block;transition:all .1s}
 .lbc.on{background:#EEF2FF;color:#4F46E5;font-weight:700}
-.lbi{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--bo);border-radius:12px;cursor:pointer;transition:all .15s}
+.lbi{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--bo);border-radius:12px;cursor:default;transition:all .15s}
 .lbi:hover{border-color:var(--b);background:#F5F7FF}
+.lib-add-btn{padding:5px 12px;border:1.5px solid var(--bo);border-radius:8px;font-size:12px;font-weight:700;color:var(--mu);background:#fff;cursor:pointer;flex-shrink:0;font-family:inherit;transition:all .15s}
+.lib-add-btn:hover{background:var(--b);color:#fff;border-color:var(--b)}
 
-/* selection screen */
+/* selection */
 .sel{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
 .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:900px;width:100%;margin-top:36px}
 .tc{background:#fff;border-radius:20px;border:1.5px solid var(--bo);padding:28px 24px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
@@ -131,29 +149,22 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .tci{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:22px}
 .tcb{position:absolute;bottom:12px;right:12px;font-size:56px;opacity:.07;line-height:1;pointer-events:none}
 
-/* notice */
+/* offline notice */
 .ofn{background:#FFF8F8;border:1px solid #FECDD3;border-radius:14px;padding:18px;text-align:center;margin-bottom:18px}
 
 /* empty */
 .emp{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;border:1.5px dashed #CBD5E1;border-radius:14px;background:#FAFBFC;text-align:center;gap:8px}
 
-/* grids */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .rg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
-
-/* utils */
 .fl{display:flex}.ac{align-items:center}.sb{justify-content:space-between}.f1{flex:1}.mw0{min-width:0}
 .col{flex-direction:column}
-.g4{gap:4px}.g6{gap:6px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.g14{gap:14px}.g16{gap:16px}.g18{gap:18px}
+.g4{gap:4px}.g6{gap:6px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.g14{gap:14px}.g16{gap:16px}
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mt14{margin-top:14px}.mt16{margin-top:16px}
-.mb6{margin-bottom:6px}.mb8{margin-bottom:8px}.mb10{margin-bottom:10px}.mb14{margin-bottom:14px}.mb16{margin-bottom:16px}.mb18{margin-bottom:18px}
-.pt12{padding-top:12px}.bt{border-top:1px solid #F1F5F9}.bb{border-bottom:1px solid #F8FAFC}
+.mb6{margin-bottom:6px}.mb8{margin-bottom:8px}.mb14{margin-bottom:14px}.mb18{margin-bottom:18px}
 .fw7{font-weight:700}.fw8{font-weight:800}
 .f10{font-size:10px}.f11{font-size:11px}.f12{font-size:12px}.f13{font-size:13px}.f14{font-size:14px}
-.cm{color:var(--mu)}.cf{color:var(--fa)}.cb2{color:var(--b)}
-.uc{text-transform:uppercase;letter-spacing:.05em}
-.tr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pdot{width:6px;height:6px;border-radius:50%;background:#CBD5E1}
 .pdot.on{width:20px;border-radius:3px;background:var(--b)}
 input[type=date]::-webkit-calendar-picker-indicator,
@@ -163,20 +174,20 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator{cursor:pointer;opa
 </head>
 <body>
 <div id="app"></div>
+
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
 var S = {
   view:'selection', ctype:null, rule:'single',
   days:['월','수','금'],
-  sessions:[
-    {id:1,date:'',st:'',et:'',place:'',cap:30},
-    {id:2,date:'',st:'',et:'',place:'',cap:30}
-  ],
-  mods:[], tog:{en1:false,en2:false,mon:false,unl:false,seq:false,pre:false,qr:true,man:true},
-  libOpen:false, libCat:'all', setOpen:false, setTitle:''
+  sessions:[{id:1,date:'',st:'',et:'',place:'',cap:30},{id:2,date:'',st:'',et:'',place:'',cap:30}],
+  mods:[],
+  // roadmap items per chapter (key = chapter index string)
+  chapItems:{'0':['video-신입사원 환영사 및 비전 공유','doc-사내 핵심가치 가이드북']},
+  tog:{en1:false,en2:false,mon:false,unl:false,seq:false,pre:false,qr:true,man:true},
+  libOpen:false, libCat:'all', libTargetChap:null,
+  setOpen:false, setTitle:''
 };
-
-function upd(patch){Object.assign(S,patch);render();}
 
 // ─── ICONS ───────────────────────────────────────────────────────────────────
 var IC={
@@ -187,7 +198,7 @@ var IC={
   x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   cr:'<polyline points="9 18 15 12 9 6"/>',
   doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>',
-  list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>',
+  list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>',
   trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
   chk:'<polyline points="20 6 9 17 4 12"/>',
   cog:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
@@ -198,7 +209,8 @@ var IC={
   wand:'<path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/>',
   up:'<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>',
   srch:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
-  rot:'<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.38"/>'
+  rot:'<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.38"/>',
+  grip:'<circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>'
 };
 function ic(n,sz,col){
   var f=n==='zap'?'currentColor':'none';
@@ -208,258 +220,307 @@ function ic(n,sz,col){
 
 // ─── LIB DATA ─────────────────────────────────────────────────────────────────
 var LIB=[
-  {t:'2025년 기업문화 핵심가치 내재화 특강',type:'video',time:'45:20',date:'2026.01.15'},
-  {t:'신규 입사자 시스템 가이드(기본편)',type:'doc',time:'-',date:'2025.11.20'},
-  {t:'직장 내 성희롱 예방 교육 (법정의무)',type:'video',time:'60:00',date:'2025.10.05'},
-  {t:'2025 상반기 임직원 만족도 설문',type:'survey',time:'-',date:'2025.09.12'},
-  {t:'신입사원 OJT 최종 평가',type:'exam',time:'20문항',date:'2026.02.10'},
-  {t:'보안 인식 중간 점검',type:'exam',time:'10문항',date:'2026.01.05'}
+  {id:'lib1',t:'2025년 기업문화 핵심가치 내재화 특강',type:'video',time:'45:20',date:'2026.01.15'},
+  {id:'lib2',t:'신규 입사자 시스템 가이드(기본편)',type:'doc',time:'-',date:'2025.11.20'},
+  {id:'lib3',t:'직장 내 성희롱 예방 교육 (법정의무)',type:'video',time:'60:00',date:'2025.10.05'},
+  {id:'lib4',t:'2025 상반기 임직원 만족도 설문',type:'survey',time:'-',date:'2025.09.12'},
+  {id:'lib5',t:'신입사원 OJT 최종 평가',type:'exam',time:'20문항',date:'2026.02.10'},
+  {id:'lib6',t:'보안 인식 중간 점검',type:'exam',time:'10문항',date:'2026.01.05'}
 ];
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function render(){
+// ─── DRAG STATE ───────────────────────────────────────────────────────────────
+var drag = {el:null, chapIdx:null, itemIdx:null, overEl:null};
+
+// ─── RENDER (full) ────────────────────────────────────────────────────────────
+// Only called once on init and on view change (selection↔editor)
+// Everything else uses targeted DOM patches
+var _rendered = false;
+
+function fullRender(){
   document.getElementById('app').innerHTML = S.view==='selection' ? selHTML() : editorHTML();
-  bind();
+  if(S.view==='editor') setupRoadmapDnD();
+  _rendered=true;
 }
 
-// ── SELECTION ─────────────────────────────────────────────────────────────────
+// ─── PARTIAL UPDATES (no full re-render) ─────────────────────────────────────
+
+function patchRoadmap(){
+  var el=document.getElementById('roadmap-body');
+  if(!el) return;
+  el.innerHTML = roadmapBodyHTML();
+  setupRoadmapDnD();
+}
+
+function patchModals(){
+  var el=document.getElementById('modal-layer');
+  if(!el) return;
+  el.innerHTML = (S.setOpen?setModalHTML():'')+(S.libOpen?libModalHTML():'');
+}
+
+function patchLeftSessions(){
+  var el=document.getElementById('sessions-content');
+  if(!el) return;
+  el.innerHTML = S.rule==='all' ? batchContent() : manualContent();
+}
+
+function patchLeftRules(){
+  var el=document.getElementById('rule-grid');
+  if(!el) return;
+  el.innerHTML = ruleCardsHTML();
+}
+
+function patchToggles(){
+  document.querySelectorAll('.tog[data-key]').forEach(function(b){
+    b.classList.toggle('on', !!S.tog[b.dataset.key]);
+  });
+}
+
+function patchDayBtns(){
+  document.querySelectorAll('.db[data-day]').forEach(function(b){
+    b.classList.toggle('on', S.days.indexOf(b.dataset.day)>=0);
+  });
+}
+
+// ─── SELECTION ────────────────────────────────────────────────────────────────
 function selHTML(){
   var types=[
     {id:'online', e:'🎬',label:'온라인 코스',   bg:'#DBEAFE',desc:'비대면·자기주도 학습 과정을 설계합니다. VOD, 문서, 시험을 자유롭게 조합하세요.',tags:['VOD','문서','시험/퀴즈']},
     {id:'offline',e:'📍',label:'오프라인 코스',  bg:'#FFE4E6',desc:'집합 교육과 출석 관리에 최적화된 플로우입니다. QR 출석 및 회차 관리를 지원합니다.',tags:['회차 관리','QR 출석','수기 처리']},
-    {id:'blended',e:'✨',label:'블렌디드 코스',  bg:'#EDE9FE',desc:'온/오프라인을 유기적으로 결합합니다. 사전·사후 학습부터 현장 교육, 평가까지 한 흐름으로.',tags:['온+오프 결합','사전 학습']}
+    {id:'blended',e:'✨',label:'블렌디드 코스',  bg:'#EDE9FE',desc:'온/오프라인을 유기적으로 결합합니다. 사전 학습부터 현장 교육, 평가까지 한 흐름으로.',tags:['온+오프 결합','사전 학습']}
   ];
   var cards=types.map(function(t,i){
     var tags=t.tags.map(function(tg){return '<span class="bdg bs">'+tg+'</span>';}).join('');
-    return '<div class="tc au" style="animation-delay:'+(i*0.07)+'s" data-action="seltype" data-val="'+t.id+'">'+
-      '<div class="tci" style="background:'+t.bg+'">'+t.e+'</div>'+
-      '<div style="font-size:17px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em">'+t.label+'</div>'+
-      '<div style="font-size:13px;color:#64748B;line-height:1.65;margin-bottom:16px">'+t.desc+'</div>'+
-      '<div class="fl" style="flex-wrap:wrap;gap:6px">'+tags+'</div>'+
-      '<div class="tcb">'+t.e+'</div></div>';
+    return '<div class="tc sel-enter" style="animation-delay:'+(i*0.07)+'s" data-action="seltype" data-val="'+t.id+'">'
+      +'<div class="tci" style="background:'+t.bg+'">'+t.e+'</div>'
+      +'<div style="font-size:17px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em">'+t.label+'</div>'
+      +'<div style="font-size:13px;color:#64748B;line-height:1.65;margin-bottom:16px">'+t.desc+'</div>'
+      +'<div class="fl" style="flex-wrap:wrap;gap:6px">'+tags+'</div>'
+      +'<div class="tcb">'+t.e+'</div></div>';
   }).join('');
-  return '<div class="sel">'+
-    '<div class="fl ac g10 au" style="margin-bottom:44px">'+
-      '<div style="width:30px;height:30px;background:#4F46E5;border-radius:8px;display:flex;align-items:center;justify-content:center">'+ic('layers',14,'#fff')+'</div>'+
-      '<span style="font-weight:800;font-size:15px">TouchClass</span>'+
-      '<span style="color:#CBD5E1;margin:0 6px">—</span>'+
-      '<span style="font-size:13px;color:#64748B">새 코스 만들기</span></div>'+
-    '<div class="au d1" style="text-align:center">'+
-      '<h1 style="font-size:28px;font-weight:800;margin-bottom:8px;letter-spacing:-.03em">어떤 코스를 개설하시겠어요?</h1>'+
-      '<p style="font-size:13px;color:#64748B">코스 유형에 따라 최적화된 등록 환경이 자동으로 구성됩니다</p></div>'+
-    '<div class="tg">'+cards+'</div>'+
-    '<p class="au d3" style="font-size:12px;color:#94A3B8;margin-top:28px">등록 후에도 코스 유형 일부 설정은 변경 가능합니다</p></div>';
+  return '<div class="sel">'
+    +'<div class="fl ac g10 sel-enter" style="margin-bottom:44px">'
+      +'<div style="width:30px;height:30px;background:#4F46E5;border-radius:8px;display:flex;align-items:center;justify-content:center">'+ic('layers',14,'#fff')+'</div>'
+      +'<span style="font-weight:800;font-size:15px">TouchClass</span>'
+      +'<span style="color:#CBD5E1;margin:0 6px">—</span>'
+      +'<span style="font-size:13px;color:#64748B">새 코스 만들기</span></div>'
+    +'<div class="sel-enter" style="text-align:center;animation-delay:.06s">'
+      +'<h1 style="font-size:28px;font-weight:800;margin-bottom:8px;letter-spacing:-.03em">어떤 코스를 개설하시겠어요?</h1>'
+      +'<p style="font-size:13px;color:#64748B">코스 유형에 따라 최적화된 등록 환경이 자동으로 구성됩니다</p></div>'
+    +'<div class="tg">'+cards+'</div>'
+    +'<p class="sel-enter" style="font-size:12px;color:#94A3B8;margin-top:28px;animation-delay:.18s">등록 후에도 코스 유형 일부 설정은 변경 가능합니다</p>'
+    +'</div>';
 }
 
-// ── EDITOR ────────────────────────────────────────────────────────────────────
+// ─── EDITOR ───────────────────────────────────────────────────────────────────
 function editorHTML(){
   var lbl={online:'온라인',offline:'오프라인',blended:'블렌디드'}[S.ctype];
   var emj={online:'🎬',offline:'📍',blended:'✨'}[S.ctype];
   var bc=S.ctype==='offline'?'br':'bi';
   var isOff=S.ctype==='offline'||S.ctype==='blended';
-  return '<div id="app" class="ai" style="height:100vh;display:flex;flex-direction:column">'+
-    hdrHTML(lbl,emj,bc)+
-    '<div class="body">'+leftHTML(isOff)+rightHTML()+'</div>'+
-    (S.setOpen?setModalHTML():'')+
-    (S.libOpen?libModalHTML():'')+
-    '</div>';
+  return '<div style="height:100vh;display:flex;flex-direction:column">'
+    +hdrHTML(lbl,emj,bc)
+    +'<div class="body">'+leftHTML(isOff)+rightHTML()+'</div>'
+    +'<div id="modal-layer"></div>'
+    +'</div>';
 }
 
 function hdrHTML(lbl,emj,bc){
-  return '<div class="hdr">'+
-    '<button class="btn" data-action="goback" style="background:none;color:#94A3B8;padding:4px">'+ic('x',18)+'</button>'+
-    '<div style="width:1px;height:18px;background:#E2E8F0"></div>'+
-    '<div class="fl ac g8">'+
-      '<span style="font-size:12px;color:#94A3B8">코스 등록</span>'+ic('cr',13,'#CBD5E1')+
-      '<span class="bdg '+bc+'" style="font-size:11px">'+emj+' '+lbl+'</span></div>'+
-    '<div class="fl ac g4" style="margin-left:auto;margin-right:14px">'+
-      '<div class="pdot on"></div><div class="pdot"></div><div class="pdot"></div></div>'+
-    '<button class="btn bs2" style="padding:7px 14px;font-size:12px">임시저장</button>'+
-    '<button class="btn bp" style="padding:7px 14px;font-size:12px">등록 완료</button></div>';
+  return '<div class="hdr">'
+    +'<button data-action="goback" style="background:none;border:none;cursor:pointer;color:#94A3B8;padding:4px;display:flex;align-items:center">'+ic('x',18)+'</button>'
+    +'<div style="width:1px;height:18px;background:#E2E8F0"></div>'
+    +'<div class="fl ac g8">'
+      +'<span style="font-size:12px;color:#94A3B8">코스 등록</span>'+ic('cr',13,'#CBD5E1')
+      +'<span class="bdg '+bc+'" style="font-size:11px">'+emj+' '+lbl+'</span></div>'
+    +'<div class="fl ac g4" style="margin-left:auto;margin-right:14px">'
+      +'<div class="pdot on"></div><div class="pdot"></div><div class="pdot"></div></div>'
+    +'<button class="btn bs2" style="padding:7px 14px;font-size:12px">임시저장</button>'
+    +'<button class="btn bp" style="padding:7px 14px;font-size:12px">등록 완료</button>'
+    +'</div>';
 }
 
-// ── LEFT PANEL ────────────────────────────────────────────────────────────────
+// ─── LEFT ─────────────────────────────────────────────────────────────────────
 function leftHTML(isOff){
-  var h='<div class="lp"><div class="li">';
-  h+=basicCard();
-  h+=enrollCard();
-  h+=periodCard();
-  if(isOff){h+=policyCard();h+=sessionsCard();}
-  h+=optionsCard();
-  h+='</div></div>';
-  return h;
+  return '<div class="lp"><div class="li">'
+    +basicCard()+enrollCard()+periodCard()
+    +(isOff ? policyCard()+sessionsCard() : '')
+    +optionsCard()
+    +'</div></div>';
 }
 
-function tog_el(key){
+function togEl(key){
   return '<button class="tog'+(S.tog[key]?' on':'')+'" data-action="tog" data-key="'+key+'"></button>';
 }
-function rad(on){return '<span class="rad'+(on?' on':'')+'"></span>';}
-function req_btn(isReq){
-  return '<button class="rqb '+(isReq?'rqr':'rqo')+'" data-action="reqtog">'+( isReq?'필수':'선택')+'</button>';
+function radEl(on){return '<span class="rad'+(on?' on':'')+'"></span>';}
+function reqBtn(isReq){
+  return '<button class="rqb '+(isReq?'rqr':'rqo')+'" data-action="reqtog">'+(isReq?'필수':'선택')+'</button>';
 }
 
 function basicCard(){
-  return '<div class="card au d1">'+
-    '<div class="ct">코스 기본 정보</div>'+
-    '<div class="fl col g14">'+
-      '<div class="fl ac g12"><span class="flbl" style="width:68px;margin:0;flex-shrink:0">코스 분류</span>'+
-        '<button class="btn bp" style="padding:6px 12px;font-size:12px">'+ic('plus',12,'#fff')+' 분류 선택</button></div>'+
-      '<div style="position:relative"><label style="position:absolute;top:-8px;left:12px;background:#fff;padding:0 4px;font-size:11px;font-weight:700;color:#4F46E5;z-index:1">코스명</label>'+
-        '<input class="fld" style="border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.08)" value="2026년 3월 온보딩 코스"></div>'+
-      '<div style="position:relative"><label style="position:absolute;top:-8px;left:12px;background:#fff;padding:0 4px;font-size:11px;font-weight:600;color:#94A3B8;z-index:1">코스 소개</label>'+
-        '<input class="fld" placeholder="코스에 대한 간단한 소개를 입력하세요"></div>'+
-      '<div class="fl ac g16" style="padding-top:12px;border-top:1px solid #F8FAFC">'+
-        '<span class="flbl" style="width:68px;margin:0;flex-shrink:0">상단 표시</span>'+
-        '<label class="fl ac g8" style="cursor:pointer">'+rad(true)+'<span style="font-size:13px;font-weight:600;color:#334155">기본(표지)</span></label>'+
-        '<label class="fl ac g8" style="cursor:pointer">'+rad(false)+'<span style="font-size:13px;color:#64748B">이미지(최대 5장)</span></label>'+
-      '</div></div></div>';
+  return '<div class="card">'
+    +'<div class="ct">코스 기본 정보</div>'
+    +'<div class="fl col g14">'
+      +'<div class="fl ac g12"><span class="flbl" style="width:68px;margin:0;flex-shrink:0">코스 분류</span>'
+        +'<button class="btn bp" style="padding:6px 12px;font-size:12px">'+ic('plus',12,'#fff')+' 분류 선택</button></div>'
+      +'<div style="position:relative"><label style="position:absolute;top:-8px;left:12px;background:#fff;padding:0 4px;font-size:11px;font-weight:700;color:#4F46E5;z-index:1">코스명</label>'
+        +'<input class="fld" style="border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.08)" value="2026년 3월 온보딩 코스"></div>'
+      +'<div style="position:relative"><label style="position:absolute;top:-8px;left:12px;background:#fff;padding:0 4px;font-size:11px;font-weight:600;color:#94A3B8;z-index:1">코스 소개</label>'
+        +'<input class="fld" placeholder="코스에 대한 간단한 소개를 입력하세요"></div>'
+      +'<div class="fl ac g16" style="padding-top:12px;border-top:1px solid #F8FAFC">'
+        +'<span class="flbl" style="width:68px;margin:0;flex-shrink:0">상단 표시</span>'
+        +'<label class="fl ac g8" style="cursor:pointer">'+radEl(true)+'<span style="font-size:13px;font-weight:600;color:#334155">기본(표지)</span></label>'
+        +'<label class="fl ac g8" style="cursor:pointer">'+radEl(false)+'<span style="font-size:13px;color:#64748B">이미지(최대 5장)</span></label>'
+      +'</div></div></div>';
 }
 
 function enrollCard(){
-  return '<div class="card au d1">'+
-    '<div class="ct">수강 등록 방식</div>'+
-    '<div class="or"><div>'+
-      '<div style="font-size:14px;font-weight:600">회원이 직접 신청</div>'+
-      '<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+(S.tog.en1?'사용 중':'수강 목록에서 학습자가 직접 신청합니다')+'</div></div>'+
-      tog_el('en1')+'</div>'+
-    '<div class="or"><div>'+
-      '<div style="font-size:14px;font-weight:600">관리자 일괄 등록</div>'+
-      '<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+(S.tog.en2?'사용 중':'관리자가 대상자를 지정하여 등록합니다')+'</div></div>'+
-      tog_el('en2')+'</div></div>';
+  return '<div class="card">'
+    +'<div class="ct">수강 등록 방식</div>'
+    +'<div class="or"><div>'
+      +'<div style="font-size:14px;font-weight:600">회원이 직접 신청</div>'
+      +'<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+(S.tog.en1?'사용 중':'수강 목록에서 학습자가 직접 신청합니다')+'</div></div>'
+      +togEl('en1')+'</div>'
+    +'<div class="or"><div>'
+      +'<div style="font-size:14px;font-weight:600">관리자 일괄 등록</div>'
+      +'<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+(S.tog.en2?'사용 중':'관리자가 대상자를 지정하여 등록합니다')+'</div></div>'
+      +togEl('en2')+'</div>'
+    +'</div>';
 }
 
 function periodCard(){
-  return '<div class="card au d2">'+
-    '<div class="ct">수강 기간 지정</div>'+
-    '<div class="fl col g14">'+
-      '<label class="fl ac g10" style="cursor:pointer">'+rad(true)+'<span style="font-size:13px;font-weight:600">기간 직접 지정</span></label>'+
-      '<div class="fl ac g8" style="padding-left:26px">'+
-        '<input type="datetime-local" class="fld" style="max-width:195px;font-size:12px" value="2026-03-01T09:00">'+
-        '<span style="color:#94A3B8">—</span>'+
-        '<input type="datetime-local" class="fld" style="max-width:195px;font-size:12px" value="2026-03-31T23:59">'+
-      '</div>'+
-      '<label class="fl ac g10" style="cursor:pointer">'+rad(false)+'<span style="font-size:13px;color:#64748B">수강 시작일 기준</span></label>'+
-      '<label class="fl ac g10" style="cursor:pointer">'+rad(false)+'<span style="font-size:13px;color:#64748B">제한 없음</span></label>'+
-    '</div></div>';
+  return '<div class="card">'
+    +'<div class="ct">수강 기간 지정</div>'
+    +'<div class="fl col g14">'
+      +'<label class="fl ac g10" style="cursor:pointer">'+radEl(true)+'<span style="font-size:13px;font-weight:600">기간 직접 지정</span></label>'
+      +'<div class="fl ac g8" style="padding-left:26px">'
+        +'<input type="datetime-local" class="fld" style="max-width:195px;font-size:12px" value="2026-03-01T09:00">'
+        +'<span style="color:#94A3B8">—</span>'
+        +'<input type="datetime-local" class="fld" style="max-width:195px;font-size:12px" value="2026-03-31T23:59">'
+      +'</div>'
+      +'<label class="fl ac g10" style="cursor:pointer">'+radEl(false)+'<span style="font-size:13px;color:#64748B">수강 시작일 기준</span></label>'
+      +'<label class="fl ac g10" style="cursor:pointer">'+radEl(false)+'<span style="font-size:13px;color:#64748B">제한 없음</span></label>'
+    +'</div></div>';
 }
 
 function policyCard(){
-  return '<div class="card au">'+
-    '<div class="ct"><span class="bdg br">오프라인 특화</span>오프라인 운영 및 출결 정책</div>'+
-    '<div class="g2 mb18">'+
-      '<div><label class="flbl">담당 강사</label><input class="fld" placeholder="강사명 입력"></div>'+
-      '<div><label class="flbl">기본 교육 장소</label><input class="fld" placeholder="예) 본사 2층 제1교육장"></div>'+
-    '</div>'+
-    '<div class="or"><div class="fl ac g10 f1" style="margin-right:12px">'+
-      '<div style="width:30px;height:30px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('qr',13,'#64748B')+'</div>'+
-      '<div><div style="font-size:13px;font-weight:600">QR 코드 출석 관리 연동</div>'+
-        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">각 회차마다 고유 QR 코드를 발급하여 현장 출석을 실시간으로 연동합니다</div></div></div>'+
-      tog_el('qr')+'</div>'+
-    '<div class="or"><div class="fl ac g10 f1" style="margin-right:12px">'+
-      '<div style="width:30px;height:30px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('chk',13,'#64748B')+'</div>'+
-      '<div><div style="font-size:13px;font-weight:600">관리자 수기 출석 처리 허용</div>'+
-        '<div style="font-size:11px;color:#94A3B8;margin-top:2px">앱 미설치 등 예외 상황 발생 시 관리자가 직접 출석 처리할 수 있습니다</div></div></div>'+
-      tog_el('man')+'</div></div>';
+  return '<div class="card">'
+    +'<div class="ct"><span class="bdg br">오프라인 특화</span>오프라인 운영 및 출결 정책</div>'
+    +'<div class="g2 mb18">'
+      +'<div><label class="flbl">담당 강사</label><input class="fld" placeholder="강사명 입력"></div>'
+      +'<div><label class="flbl">기본 교육 장소</label><input class="fld" placeholder="예) 본사 2층 제1교육장"></div>'
+    +'</div>'
+    +'<div class="or"><div class="fl ac g10 f1" style="margin-right:12px">'
+      +'<div style="width:30px;height:30px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('qr',13,'#64748B')+'</div>'
+      +'<div><div style="font-size:13px;font-weight:600">QR 코드 출석 관리 연동</div>'
+        +'<div style="font-size:11px;color:#94A3B8;margin-top:2px">각 회차마다 고유 QR 코드를 발급하여 현장 출석을 실시간으로 연동합니다</div></div></div>'
+      +togEl('qr')+'</div>'
+    +'<div class="or"><div class="fl ac g10 f1" style="margin-right:12px">'
+      +'<div style="width:30px;height:30px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('chk',13,'#64748B')+'</div>'
+      +'<div><div style="font-size:13px;font-weight:600">관리자 수기 출석 처리 허용</div>'
+        +'<div style="font-size:11px;color:#94A3B8;margin-top:2px">앱 미설치 등 예외 상황 발생 시 관리자가 직접 출석 처리할 수 있습니다</div></div></div>'
+      +togEl('man')+'</div>'
+    +'</div>';
 }
 
-function sessionsCard(){
+function ruleCardsHTML(){
   var rules=[
     {id:'single',icon:'①',label:'단일 회차 선택',desc:'여러 일정 중 학습자가 1개만 선택하여 수강합니다'},
     {id:'multiple',icon:'⊞',label:'복수 회차 선택',desc:'지정된 수량만큼 조합하여 선택 수강합니다'},
     {id:'all',icon:'🗓',label:'전체 회차 필수',desc:'모든 회차에 일괄 자동 등록됩니다'}
   ];
-  var rcards=rules.map(function(r){
+  return rules.map(function(r){
     var a=S.rule===r.id;
     var extra='';
     if(r.id==='multiple'&&a){
-      extra='<div class="fl ac g6" style="margin-top:10px;font-size:12px;font-weight:700;color:#4F46E5;background:#fff;border:1px solid #C7D2FE;border-radius:8px;padding:6px 10px">'+
-        '필수 수강: <input type="number" value="3" style="width:36px;border:1px solid #E2E8F0;border-radius:6px;padding:2px 4px;text-align:center;outline:none;font-weight:700;font-family:inherit"> 회차</div>';
+      extra='<div class="fl ac g6" style="margin-top:10px;font-size:12px;font-weight:700;color:#4F46E5;background:#fff;border:1px solid #C7D2FE;border-radius:8px;padding:6px 10px">'
+        +'필수 수강: <input type="number" value="3" style="width:36px;border:1px solid #E2E8F0;border-radius:6px;padding:2px 4px;text-align:center;outline:none;font-weight:700;font-family:inherit"> 회차</div>';
     }
-    return '<div class="rc'+(a?' on':'')+'" data-action="setrule" data-val="'+r.id+'">'+
-      '<div style="position:absolute;top:13px;right:13px">'+rad(a)+'</div>'+
-      '<div style="width:30px;height:30px;border-radius:8px;background:'+(a?'#4F46E5':'#F1F5F9')+';color:'+(a?'#fff':'#64748B')+';display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:14px;font-weight:800">'+r.icon+'</div>'+
-      '<div style="font-size:13px;font-weight:700;color:'+(a?'#4F46E5':'#334155')+';margin-bottom:6px">'+r.label+'</div>'+
-      '<div style="font-size:11px;color:#94A3B8;line-height:1.55">'+r.desc+'</div>'+extra+'</div>';
+    return '<div class="rc'+(a?' on':'')+'" data-action="setrule" data-val="'+r.id+'">'
+      +'<div style="position:absolute;top:13px;right:13px">'+radEl(a)+'</div>'
+      +'<div style="width:30px;height:30px;border-radius:8px;background:'+(a?'#4F46E5':'#F1F5F9')+';color:'+(a?'#fff':'#64748B')+';display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:14px;font-weight:800">'+r.icon+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+(a?'#4F46E5':'#334155')+';margin-bottom:6px">'+r.label+'</div>'
+      +'<div style="font-size:11px;color:#94A3B8;line-height:1.55">'+r.desc+'</div>'
+      +extra+'</div>';
   }).join('');
+}
 
-  var content=S.rule==='all'?batchContent():manualContent();
-
-  return '<div class="card au">'+
-    '<div class="ct"><span class="bdg br">오프라인 핵심</span>수강 신청 방식 및 회차(세션) 구성</div>'+
-    '<div class="flbl mb8">학습자 이수 규칙</div>'+
-    '<div class="rg">'+rcards+'</div>'+
-    content+'</div>';
+function sessionsCard(){
+  return '<div class="card">'
+    +'<div class="ct"><span class="bdg br">오프라인 핵심</span>수강 신청 방식 및 회차(세션) 구성</div>'
+    +'<div class="flbl mb8">학습자 이수 규칙</div>'
+    +'<div class="rg" id="rule-grid">'+ruleCardsHTML()+'</div>'
+    +'<div id="sessions-content">'+(S.rule==='all'?batchContent():manualContent())+'</div>'
+    +'</div>';
 }
 
 function batchContent(){
   var bDone=S.sessions.length>0&&S.sessions[0].id>=200;
   var dBtns=['일','월','화','수','목','금','토'].map(function(d){
-    return '<button class="db'+(S.days.indexOf(d)>=0?' on':'')+'" data-action="togday" data-val="'+d+'">'+d+'</button>';
+    return '<button class="db'+(S.days.indexOf(d)>=0?' on':'')+'" data-action="togday" data-day="'+d+'">'+d+'</button>';
   }).join('');
   var trows='';
   if(bDone){
     trows=S.sessions.map(function(s,i){
-      return '<tr>'+
-        '<td><span style="font-weight:800;color:#4F46E5;font-size:12px">'+(i+1)+'회차</span></td>'+
-        '<td style="font-size:13px;font-weight:500">'+s.date+'</td>'+
-        '<td style="font-size:12px;color:#64748B">'+s.st+' – '+s.et+'</td>'+
-        '<td style="font-size:12px;color:#94A3B8">기본 장소</td>'+
-        '<td style="text-align:center;font-weight:600">'+s.cap+'</td>'+
-        '<td style="text-align:center;color:#CBD5E1">—</td></tr>';
+      return '<tr>'
+        +'<td><span style="font-weight:800;color:#4F46E5;font-size:12px">'+(i+1)+'회차</span></td>'
+        +'<td style="font-size:13px;font-weight:500">'+s.date+'</td>'
+        +'<td style="font-size:12px;color:#64748B">'+s.st+' – '+s.et+'</td>'
+        +'<td style="font-size:12px;color:#94A3B8">기본 장소</td>'
+        +'<td style="text-align:center;font-weight:600">'+s.cap+'</td>'
+        +'<td style="text-align:center;color:#CBD5E1">—</td></tr>';
     }).join('');
   } else {
-    trows='<tr><td colspan="6"><div class="emp" style="border:none;padding:28px 20px">'+
-      '<span style="font-size:24px">📅</span>'+
-      '<p style="font-size:12px;color:#94A3B8">조건을 설정하고 일괄 생성 버튼을 눌러주세요</p></div></td></tr>';
+    trows='<tr><td colspan="6"><div class="emp" style="border:none;padding:28px 20px">'
+      +'<span style="font-size:24px">📅</span>'
+      +'<p style="font-size:12px;color:#94A3B8">조건을 설정하고 일괄 생성 버튼을 눌러주세요</p></div></td></tr>';
   }
-  return '<div class="ib">'+ic('zap',15,'#4F46E5')+'<p><strong>일괄 생성 모드</strong> — 정기적으로 반복되는 회차 일정을 요일 기반으로 자동 생성합니다</p></div>'+
-    '<div style="background:#F8FAFC;border-radius:14px;padding:18px;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:16px;margin-bottom:16px">'+
-      '<div class="g2">'+
-        '<div><label class="flbl">진행 기간</label><div class="fl ac g6"><input type="date" class="fld" style="font-size:12px" value="2026-03-01"><span style="color:#94A3B8">—</span><input type="date" class="fld" style="font-size:12px" value="2026-03-31"></div></div>'+
-        '<div><label class="flbl">반복 요일</label><div class="dw">'+dBtns+'</div></div>'+
-      '</div>'+
-      '<div class="g3">'+
-        '<div><label class="flbl">공통 시간</label><div class="fl ac g5"><input type="time" class="fld" style="font-size:12px" value="22:00"><span style="color:#94A3B8;font-size:12px">—</span><input type="time" class="fld" style="font-size:12px" value="23:00"></div></div>'+
-        '<div><label class="flbl">공통 정원 (명)</label><input type="number" class="fld" value="30"></div>'+
-        '<div><label class="flbl">그룹 제한</label><input class="fld" placeholder="제한 없음"></div>'+
-      '</div>'+
-      '<button class="bbt" data-action="batch">'+ic('wand',15,'#fff')+' 설정한 규칙으로 전체 회차 일괄 생성</button>'+
-    '</div>'+
-    '<div style="font-size:12px;color:#94A3B8;margin-bottom:8px;font-weight:600">생성된 회차 목록 '+(bDone?'<span style="color:#10B981;margin-left:4px">✓ '+S.sessions.length+'개 생성됨</span>':'')+'</div>'+
-    '<div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">'+
-      '<table class="stbl"><thead><tr>'+
-        '<th style="width:55px">회차</th><th>교육 일자</th><th>교육 시간</th><th>장소</th>'+
-        '<th style="text-align:center;width:60px">정원</th><th style="text-align:center;width:65px">그룹</th></tr></thead>'+
-      '<tbody>'+trows+'</tbody></table></div>';
+  return '<div class="ib">'+ic('zap',15,'#4F46E5')+'<p><strong>일괄 생성 모드</strong> — 정기적으로 반복되는 회차 일정을 요일 기반으로 자동 생성합니다</p></div>'
+    +'<div style="background:#F8FAFC;border-radius:14px;padding:18px;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:16px;margin-bottom:16px">'
+      +'<div class="g2">'
+        +'<div><label class="flbl">진행 기간</label><div class="fl ac g6"><input type="date" class="fld" style="font-size:12px" value="2026-03-01"><span style="color:#94A3B8">—</span><input type="date" class="fld" style="font-size:12px" value="2026-03-31"></div></div>'
+        +'<div><label class="flbl">반복 요일</label><div class="fl g6">'+dBtns+'</div></div>'
+      +'</div>'
+      +'<div class="g3">'
+        +'<div><label class="flbl">공통 시간</label><div class="fl ac g5"><input type="time" class="fld" style="font-size:12px" value="22:00"><span style="color:#94A3B8;font-size:12px">—</span><input type="time" class="fld" style="font-size:12px" value="23:00"></div></div>'
+        +'<div><label class="flbl">공통 정원 (명)</label><input type="number" class="fld" value="30"></div>'
+        +'<div><label class="flbl">그룹 제한</label><input class="fld" placeholder="제한 없음"></div>'
+      +'</div>'
+      +'<button class="bbt" data-action="batch">'+ic('wand',15,'#fff')+' 설정한 규칙으로 전체 회차 일괄 생성</button>'
+    +'</div>'
+    +'<div style="font-size:12px;color:#94A3B8;margin-bottom:8px;font-weight:600">생성된 회차 목록 '+(bDone?'<span style="color:#10B981;margin-left:4px">✓ '+S.sessions.length+'개 생성됨</span>':'')+'</div>'
+    +'<div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">'
+      +'<table class="stbl"><thead><tr>'
+        +'<th style="width:55px">회차</th><th>교육 일자</th><th>교육 시간</th><th>장소</th>'
+        +'<th style="text-align:center;width:60px">정원</th><th style="text-align:center;width:65px">그룹</th>'
+      +'</tr></thead><tbody>'+trows+'</tbody></table></div>';
 }
 
 function manualContent(){
   var rows=S.sessions.filter(function(s){return s.id<200;}).map(function(s,i){
-    return '<tr>'+
-      '<td style="text-align:center;font-weight:800;color:#4F46E5;font-size:13px">'+(i+1)+'</td>'+
-      '<td><input type="date" class="fld s-date" data-sid="'+s.id+'" style="padding:7px 9px;font-size:12px" value="'+s.date+'"></td>'+
-      '<td><div class="fl ac" style="gap:3px">'+
-        '<input type="time" class="fld s-st" data-sid="'+s.id+'" style="padding:7px;font-size:12px;min-width:84px" value="'+s.st+'">'+
-        '<span style="color:#94A3B8;font-size:12px">—</span>'+
-        '<input type="time" class="fld s-et" data-sid="'+s.id+'" style="padding:7px;font-size:12px;min-width:84px" value="'+s.et+'">'+
-      '</div></td>'+
-      '<td><input class="fld s-pl" data-sid="'+s.id+'" style="padding:7px 9px;font-size:12px" placeholder="기본 장소" value="'+s.place+'"></td>'+
-      '<td style="text-align:center"><input type="number" class="fld s-cp" data-sid="'+s.id+'" style="padding:7px 4px;font-size:12px;text-align:center;width:52px" value="'+s.cap+'"></td>'+
-      '<td style="text-align:center"><button style="width:26px;height:26px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;cursor:pointer;font-size:11px;color:#94A3B8;font-family:inherit">—</button></td>'+
-      '<td><button class="btn" data-action="remsess" data-sid="'+s.id+'" style="background:none;color:#CBD5E1;padding:4px">'+ic('trash',14)+'</button></td>'+
-    '</tr>';
+    return '<tr>'
+      +'<td style="text-align:center;font-weight:800;color:#4F46E5;font-size:13px">'+(i+1)+'</td>'
+      +'<td><input type="date" class="fld sess-f" data-sid="'+s.id+'" data-fld="date" style="padding:7px 9px;font-size:12px" value="'+s.date+'"></td>'
+      +'<td><div class="fl ac" style="gap:3px">'
+        +'<input type="time" class="fld sess-f" data-sid="'+s.id+'" data-fld="st" style="padding:7px;font-size:12px;min-width:84px" value="'+s.st+'">'
+        +'<span style="color:#94A3B8;font-size:12px">—</span>'
+        +'<input type="time" class="fld sess-f" data-sid="'+s.id+'" data-fld="et" style="padding:7px;font-size:12px;min-width:84px" value="'+s.et+'">'
+      +'</div></td>'
+      +'<td><input class="fld sess-f" data-sid="'+s.id+'" data-fld="place" style="padding:7px 9px;font-size:12px" placeholder="기본 장소" value="'+s.place+'"></td>'
+      +'<td style="text-align:center"><input type="number" class="fld sess-f" data-sid="'+s.id+'" data-fld="cap" style="padding:7px 4px;font-size:12px;text-align:center;width:52px" value="'+s.cap+'"></td>'
+      +'<td style="text-align:center"><button style="width:26px;height:26px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;cursor:pointer;font-size:11px;color:#94A3B8;font-family:inherit">—</button></td>'
+      +'<td><button data-action="remsess" data-sid="'+s.id+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:4px">'+ic('trash',14)+'</button></td>'
+    +'</tr>';
   }).join('');
-  var msg=S.rule==='single'?
-    '학습자가 선택할 수 있는 일정(선택지)을 하나씩 추가하세요. 학습자는 이 중 단 1개만 선택 가능합니다.':
-    '전체 회차 풀을 구성하세요. 학습자는 지정된 수량을 자유롭게 조합하여 선택합니다.';
-  return '<div class="ib">'+ic('info',15,'#4F46E5')+'<p>'+msg+'</p></div>'+
-    '<div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">'+
-      '<table class="stbl"><thead><tr>'+
-        '<th style="width:40px;text-align:center">#</th><th>교육 일자</th><th>교육 시간</th><th>장소</th>'+
-        '<th style="text-align:center;width:66px">정원</th><th style="text-align:center;width:56px">그룹</th><th style="width:32px"></th></tr></thead>'+
-      '<tbody>'+rows+'</tbody></table>'+
-      '<button data-action="addsess" style="width:100%;padding:11px;background:#fff;border:none;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:700;color:#64748B;cursor:pointer;font-family:inherit;border-radius:0 0 12px 12px">'+ic('plus',13)+' 선택 일정(회차) 추가하기</button>'+
-    '</div>';
+  var msg=S.rule==='single'
+    ?'학습자가 선택할 수 있는 일정(선택지)을 하나씩 추가하세요. 학습자는 이 중 단 1개만 선택 가능합니다.'
+    :'전체 회차 풀을 구성하세요. 학습자는 지정된 수량을 자유롭게 조합하여 선택합니다.';
+  return '<div class="ib">'+ic('info',15,'#4F46E5')+'<p>'+msg+'</p></div>'
+    +'<div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">'
+      +'<table class="stbl"><thead><tr>'
+        +'<th style="width:40px;text-align:center">#</th><th>교육 일자</th><th>교육 시간</th><th>장소</th>'
+        +'<th style="text-align:center;width:66px">정원</th><th style="text-align:center;width:56px">그룹</th><th style="width:32px"></th>'
+      +'</tr></thead><tbody>'+rows+'</tbody></table>'
+      +'<button data-action="addsess" style="width:100%;padding:11px;background:#fff;border:none;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:700;color:#64748B;cursor:pointer;font-family:inherit;border-radius:0 0 12px 12px">'+ic('plus',13)+' 선택 일정(회차) 추가하기</button>'
+    +'</div>';
 }
 
 function optionsCard(){
@@ -469,20 +530,36 @@ function optionsCard(){
     {k:'seq',label:'순서대로 수강하기',desc:'이전 항목 완료 후 다음 항목에 접근 가능합니다'},
     {k:'pre',label:'수강 전 코스 정보 미리보기',desc:'코스 목록에서 상세 정보를 먼저 확인할 수 있습니다'}
   ];
-  var rows=opts.map(function(o){
-    return '<div class="or"><div>'+
-      '<div style="font-size:14px;font-weight:600">'+o.label+'</div>'+
-      '<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+o.desc+'</div></div>'+
-      tog_el(o.k)+'</div>';
-  }).join('');
-  return '<div class="card au"><div class="ct">코스 상세 옵션</div>'+rows+'</div>';
+  return '<div class="card"><div class="ct">코스 상세 옵션</div>'
+    +opts.map(function(o){
+      return '<div class="or"><div>'
+        +'<div style="font-size:14px;font-weight:600">'+o.label+'</div>'
+        +'<div style="font-size:12px;color:#94A3B8;margin-top:2px">'+o.desc+'</div></div>'
+        +togEl(o.k)+'</div>';
+    }).join('')
+    +'</div>';
 }
 
-// ── RIGHT PANEL ───────────────────────────────────────────────────────────────
+// ─── RIGHT / ROADMAP ─────────────────────────────────────────────────────────
 function rightHTML(){
-  return '<div class="rp">'+
-    (S.ctype==='offline'?offRoadmapHTML():freeRoadmapHTML())+
-    '</div>';
+  var isOff=S.ctype==='offline';
+  var headBtn=isOff?'':('<button data-action="openlib" data-chap="0" style="background:#F1F5F9;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',12)+' 항목 추가</button>');
+  return '<div class="rp">'
+    +'<div class="rmh">'
+      +'<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'
+        +'<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div>'
+      +headBtn+'</div>'
+    +'<div class="rmb" id="roadmap-body">'+roadmapBodyHTML()+'</div>'
+    +(isOff?'':'<div class="rmf">'
+      +'<button class="rmt" data-action="openlib" data-chap="0">'+ic('plus',13)+' 학습 항목 추가</button>'
+      +'<button class="rmt">'+ic('rot',13)+' 기존 코스 링크</button>'
+    +'</div>')
+    +'</div>';
+}
+
+function roadmapBodyHTML(){
+  if(S.ctype==='offline') return offRoadmapHTML();
+  return freeRoadmapHTML();
 }
 
 function offRoadmapHTML(){
@@ -493,156 +570,163 @@ function offRoadmapHTML(){
       var sub=s.date?(s.date+' · '+s.st+'–'+s.et):'일정 미입력';
       var isReq=S.rule==='all';
       var cond=isReq?'<div style="margin-top:8px;padding-top:8px;border-top:1px solid #F1F5F9;display:flex;gap:6px;font-size:10px;color:#64748B"><span style="font-weight:700;color:#4F46E5">이수 조건</span><span>출석 처리 완료 시 자동 이수</span></div>':'';
-      return '<div class="rmi ng">'+
-        '<div class="rmic">'+
-          '<div class="fl ac g10">'+
-            '<div style="width:30px;height:30px;background:#ECFDF5;color:#059669;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('map',14)+'</div>'+
-            '<div class="f1 mw0"><div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>'+
-              '<div style="font-size:10px;color:#94A3B8;margin-top:2px">'+sub+'</div></div>'+
-            '<button class="rqb '+(isReq?'rqr':'rqo')+'" data-action="reqtog">'+(isReq?'필수':'선택')+'</button>'+
-          '</div>'+cond+'</div></div>';
+      return '<div class="rmi ng">'
+        +'<div class="rmic"><div class="fl ac g10">'
+          +'<div style="width:30px;height:30px;background:#ECFDF5;color:#059669;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic('map',14)+'</div>'
+          +'<div class="f1 mw0"><div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>'
+            +'<div style="font-size:10px;color:#94A3B8;margin-top:2px">'+sub+'</div></div>'
+          +'<button class="rqb '+(isReq?'rqr':'rqo')+'" data-action="reqtog">'+(isReq?'필수':'선택')+'</button>'
+        +'</div>'+cond+'</div></div>';
     }).join('');
   } else {
     items='<div class="emp"><span style="font-size:24px">📅</span><p style="font-size:11px;color:#94A3B8">좌측에서 회차를 추가해주세요</p></div>';
   }
-  return '<div class="rmh">'+
-      '<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'+
-        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div></div>'+
-    '<div class="rmb">'+
-      '<div class="ofn">'+
-        '<div style="font-size:28px;margin-bottom:8px">📍</div>'+
-        '<div style="font-size:13px;font-weight:800;margin-bottom:6px">오프라인 자동 커리큘럼</div>'+
-        '<div style="font-size:11px;color:#64748B;line-height:1.65;margin-bottom:14px">순수 오프라인 코스는 별도 목차 조립 없이<br>좌측 <strong>회차 설정이 로드맵에 자동 반영</strong>됩니다</div>'+
-        '<div style="border-top:1px solid #FECDD3;padding-top:12px">'+
-          '<p style="font-size:10px;color:#94A3B8;margin-bottom:8px">온라인 사전/사후 학습을 추가하시겠어요?</p>'+
-          '<button data-action="toblended" style="width:100%;background:#fff;border:1.5px solid #4F46E5;color:#4F46E5;border-radius:10px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">블렌디드 코스로 전환</button>'+
-        '</div></div>'+
-      '<div class="rmc">'+
-        '<div class="rmch"><div class="rmn">01</div>'+
-          '<span style="font-size:13px;font-weight:800">현장 교육 참석 및 출석</span>'+
-          '<span class="bdg bg" style="margin-left:auto">'+S.sessions.length+' Sessions</span></div>'+
-        '<div class="rmcl"></div>'+
-        '<div class="rmis">'+items+'</div></div>'+
-      '<div style="padding-top:12px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center">'+
-        '<div class="fl ac g6" style="font-size:12px;color:#64748B;font-weight:600">'+ic('chk',14,'#10B981')+' 회차 자동 연동 중</div>'+
-        '<span style="font-size:12px;font-weight:800;color:#4F46E5">총 '+S.sessions.length+'회차</span></div>'+
-    '</div>';
+  return '<div class="ofn">'
+      +'<div style="font-size:28px;margin-bottom:8px">📍</div>'
+      +'<div style="font-size:13px;font-weight:800;margin-bottom:6px">오프라인 자동 커리큘럼</div>'
+      +'<div style="font-size:11px;color:#64748B;line-height:1.65;margin-bottom:14px">순수 오프라인 코스는 별도 목차 조립 없이<br>좌측 <strong>회차 설정이 로드맵에 자동 반영</strong>됩니다</div>'
+      +'<div style="border-top:1px solid #FECDD3;padding-top:12px">'
+        +'<p style="font-size:10px;color:#94A3B8;margin-bottom:8px">온라인 사전/사후 학습을 추가하시겠어요?</p>'
+        +'<button data-action="toblended" style="width:100%;background:#fff;border:1.5px solid #4F46E5;color:#4F46E5;border-radius:10px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">블렌디드 코스로 전환</button>'
+      +'</div></div>'
+    +'<div class="rmc">'
+      +'<div class="rmch"><div class="rmn">01</div>'
+        +'<span style="font-size:13px;font-weight:800">현장 교육 참석 및 출석</span>'
+        +'<span class="bdg bg" style="margin-left:auto">'+S.sessions.length+' Sessions</span></div>'
+      +'<div class="rmcl"></div>'
+      +'<div class="rmis">'+items+'</div></div>'
+    +'<div style="padding-top:12px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center">'
+      +'<div class="fl ac g6" style="font-size:12px;color:#64748B;font-weight:600">'+ic('chk',14,'#10B981')+' 회차 자동 연동 중</div>'
+      +'<span style="font-size:12px;font-weight:800;color:#4F46E5">총 '+S.sessions.length+'회차</span></div>';
 }
 
-function rmItem(iconName,iconBg,iconColor,title,sub,isReq,hasCond,greenStyle){
-  var nCls=greenStyle?'ng':'nb';
-  var iCls=greenStyle?'rmic gi':'rmic';
+// item type metadata
+var ITEM_META={
+  video:{bg:'#DBEAFE',col:'#2563EB',icon:'video',sub:'Video'},
+  doc:  {bg:'#F1F5F9',col:'#64748B',icon:'doc',sub:'Document'},
+  survey:{bg:'#FAE8FF',col:'#9333EA',icon:'list',sub:'Survey'},
+  exam: {bg:'#EDE9FE',col:'#7C3AED',icon:'list',sub:'Exam'},
+  map:  {bg:'#D1FAE5',col:'#059669',icon:'map',sub:'Offline'}
+};
+
+function rmItemHTML(typeKey, title, chapIdx, itemIdx){
+  var m=ITEM_META[typeKey]||ITEM_META.doc;
+  var isReq=typeKey!=='doc';
+  var hasCond=isReq&&typeKey==='video';
+  var condEl='';
+  if(hasCond){
+    condEl='<div class="cb" data-action="opensettings" data-title="'+title+'">'
+      +'<div class="fl ac g6" style="font-size:10px;color:#64748B">'
+        +'<span style="font-weight:700;color:#4F46E5">이수 조건</span>'
+        +'<span>진도율 100% · 최소 15분 · 스킵 방지 ON</span></div>'
+      +ic('cog',12,'#94A3B8')+'</div>';
+  }
+  var greenStyle=typeKey==='map';
+  var iCls='rmic'+(greenStyle?' gi':'');
   var tColor=greenStyle?'#065F46':'#0F172A';
   var sColor=greenStyle?'#10B981':'#94A3B8';
   var sWeight=greenStyle?'700':'400';
-  var condEl='';
-  if(isReq&&hasCond){
-    condEl='<div class=\"cb\" data-action=\"opensettings\" data-title=\"'+title+'\">'+
-      '<div class=\"fl ac g6\" style=\"font-size:10px;color:#64748B\">'+
-        '<span style=\"font-weight:700;color:#4F46E5\">이수 조건</span>'+
-        '<span>'+hasCond+'</span></div>'+
-      ic('cog',12,'#94A3B8')+'</div>';
-  }
-  var delBtn='<button data-action=\"rmitem\" title=\"항목 삭제\" style=\"position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#CBD5E1;opacity:0;transition:opacity .15s,color .15s;z-index:2;\">'+ic('trash',12)+'</button>';
-  return '<div class=\"rmi '+nCls+'\" style=\"position:relative\" onmouseenter=\"var b=this.querySelector(\'[data-action=rmitem]\');if(b)b.style.opacity=1\" onmouseleave=\"var b=this.querySelector(\'[data-action=rmitem]\');if(b)b.style.opacity=0\">'+
-    delBtn+
-    '<div class=\"'+iCls+'\" style=\"padding-right:14px\">'+
-      '<div class=\"fl ac g10\">'+
-        '<div style=\"width:30px;height:30px;background:'+iconBg+';color:'+iconColor+';border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0\">'+ic(iconName,14)+'</div>'+
-        '<div class=\"f1 mw0\">'+
-          '<div style=\"font-size:12px;font-weight:700;color:'+tColor+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">'+title+'</div>'+
-          '<div style=\"font-size:10px;color:'+sColor+';margin-top:2px;text-transform:uppercase;font-weight:'+sWeight+'\">'+sub+'</div>'+
-        '</div>'+
-        req_btn(isReq)+
-      '</div>'+condEl+
-    '</div></div>';
+  return '<div class="rmi nb" draggable="true" data-chap="'+chapIdx+'" data-item="'+itemIdx+'" style="position:relative">'
+    +'<div class="'+iCls+'" style="padding-left:8px">'
+      +'<div class="fl ac g10">'
+        +'<div class="drag-handle" title="드래그하여 순서 변경">'+ic('grip',14,'#CBD5E1')+'</div>'
+        +'<div style="width:30px;height:30px;background:'+m.bg+';color:'+m.col+';border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ic(m.icon,14)+'</div>'
+        +'<div class="f1 mw0">'
+          +'<div style="font-size:12px;font-weight:700;color:'+tColor+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+title+'</div>'
+          +'<div style="font-size:10px;color:'+sColor+';margin-top:2px;text-transform:uppercase;font-weight:'+sWeight+'">'+m.sub+'</div>'
+        +'</div>'
+        +reqBtn(isReq)
+        +'<button class="rm-del" data-action="rmitem" data-chap="'+chapIdx+'" data-item="'+itemIdx+'" title="항목 삭제">'+ic('trash',12)+'</button>'
+      +'</div>'+condEl
+    +'</div></div>';
 }
 
 function freeRoadmapHTML(){
   var chN=S.ctype==='blended'?3:2;
   var blendedCh='';
   if(S.ctype==='blended'){
-    blendedCh='<div class="rmc">'+
-      '<div class="rmch"><div class="rmn">02</div>'+
-        '<span style="font-size:13px;font-weight:800">현장 실습 및 네트워킹</span></div>'+
-      '<div class="rmcl"></div>'+
-      '<div class="rmis">'+rmItem('map','#D1FAE5','#059669','현장 출석 체크','OFFLINE SESSION LINKED',true,null,true)+'</div></div>';
+    blendedCh='<div class="rmc">'
+      +'<div class="rmch"><div class="rmn">02</div>'
+        +'<span style="font-size:13px;font-weight:800">현장 실습 및 네트워킹</span></div>'
+      +'<div class="rmcl"></div>'
+      +'<div class="rmis">'+rmItemHTML('map','현장 출석 체크','b',0)+'</div></div>';
   }
+
+  // chapter 0 (fixed "오리엔테이션")
+  var items0=(S.chapItems['0']||[]).map(function(key,i){
+    var parts=key.split('-');
+    var t=parts.slice(1).join('-');
+    return rmItemHTML(parts[0],t,'0',i);
+  }).join('');
+  var ch0='<div class="rmc">'
+    +'<div class="rmch"><div class="rmn">01</div>'
+      +'<span style="font-size:13px;font-weight:800">오리엔테이션 및 기초 학습</span>'
+      +'<button data-action="openlib" data-chap="0" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:2px" title="항목 추가">'+ic('plus',13)+'</button></div>'
+    +'<div class="rmcl"></div>'
+    +'<div class="rmis" id="chap-items-0">'+(items0||'<div class="emp" style="padding:18px;gap:10px"><span style="font-size:11px;color:#94A3B8;font-weight:600">학습 항목이 없습니다</span><button data-action="openlib" data-chap="0" style="display:flex;align-items:center;gap:5px;padding:7px 14px;background:#4F46E5;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ 항목 추가</button></div>')+'</div></div>';
+
   var customChs=S.mods.map(function(m,idx){
     var n=chN+idx;
-    return '<div class="rmc">'+
-      '<div class="rmch"><div class="rmn">'+String(n).padStart(2,'0')+'</div>'+
-        '<input value="'+m.title+'" style="font-size:13px;font-weight:800;background:transparent;border:none;outline:none;flex:1;font-family:inherit">'+
-        '<button data-action="removemod" data-mid="'+m.id+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:4px">'+ic('trash',13)+'</button></div>'+
-      '<div class="rmcl"></div>'+
-      '<div class="rmis"><div class="emp" style="padding:20px">'+
-        '<span style="font-size:18px">➕</span>'+
-        '<span style="font-size:11px;color:#94A3B8;font-weight:600">학습 항목이 없습니다</span>'+
-        '<button data-action="openlib" style="font-size:11px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:5px 12px;cursor:pointer;color:#64748B;font-weight:700;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',11)+' 항목 매핑</button>'+
-      '</div></div></div>';
+    var chapKey='c'+m.id;
+    var items=(S.chapItems[chapKey]||[]).map(function(key,i){
+      var parts=key.split('-');
+      var t=parts.slice(1).join('-');
+      return rmItemHTML(parts[0],t,chapKey,i);
+    }).join('');
+    return '<div class="rmc">'
+      +'<div class="rmch"><div class="rmn">'+String(n).padStart(2,'0')+'</div>'
+        +'<input value="'+m.title+'" data-action="modtitle" data-mid="'+m.id+'" style="font-size:13px;font-weight:800;background:transparent;border:none;outline:none;flex:1;font-family:inherit;min-width:0">'
+        +'<button data-action="openlib" data-chap="'+chapKey+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:2px" title="항목 추가">'+ic('plus',13)+'</button>'
+        +'<button data-action="removemod" data-mid="'+m.id+'" style="background:none;border:none;cursor:pointer;color:#CBD5E1;display:flex;align-items:center;padding:4px">'+ic('trash',13)+'</button></div>'
+      +'<div class="rmcl"></div>'
+      +'<div class="rmis" id="chap-items-'+chapKey+'">'
+        +(items||'<div class="emp" style="padding:18px;gap:10px"><span style="font-size:11px;color:#94A3B8;font-weight:600">학습 항목이 없습니다</span><button data-action="openlib" data-chap="'+chapKey+'" style="display:flex;align-items:center;gap:5px;padding:7px 14px;background:#4F46E5;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ 항목 추가</button></div>')
+      +'</div></div>';
   }).join('');
 
-  return '<div class="rmh">'+
-      '<div><div style="font-size:13px;font-weight:800">커리큘럼 로드맵</div>'+
-        '<div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:1px">Roadmap Index</div></div>'+
-      '<button data-action="openlib" style="background:#F1F5F9;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#64748B;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">'+ic('plus',12)+' 항목 추가</button></div>'+
-    '<div class="rmb">'+
-      '<div class="rmc">'+
-        '<div class="rmch"><div class="rmn">01</div>'+
-          '<span style="font-size:13px;font-weight:800">오리엔테이션 및 기초 학습</span></div>'+
-        '<div class="rmcl"></div>'+
-        '<div class="rmis">'+
-          rmItem('video','#DBEAFE','#2563EB','신입사원 환영사 및 비전 공유','Video · 15:00',true,'진도율 100% · 최소 15분 · 스킵 방지 ON',false)+
-          rmItem('doc','#F1F5F9','#64748B','사내 핵심가치 가이드북','Document · PDF',false,null,false)+
-        '</div></div>'+
-      blendedCh+customChs+
-      '<button data-action="addmod" style="width:100%;margin-top:14px;padding:13px;border:1.5px dashed #CBD5E1;border-radius:14px;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:#94A3B8;font-size:11px;font-weight:700;font-family:inherit">'+
-        ic('plus',15)+' 새 챕터 / 모듈 추가</button>'+
-    '</div>'+
-    '<div class="rmf">'+
-      '<button class="rmt" data-action="openlib">'+ic('plus',13)+' 학습 항목 추가</button>'+
-      '<button class="rmt">'+ic('rot',13)+' 기존 코스 링크</button></div>';
+  return ch0+blendedCh+customChs
+    +'<button data-action="addmod" style="width:100%;margin-top:14px;padding:13px;border:1.5px dashed #CBD5E1;border-radius:14px;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:#94A3B8;font-size:11px;font-weight:700;font-family:inherit">'+ic('plus',15)+' 새 챕터 / 모듈 추가</button>';
 }
 
-// ── MODALS ────────────────────────────────────────────────────────────────────
+// ─── MODALS ───────────────────────────────────────────────────────────────────
 function setModalHTML(){
   var title=S.setTitle;
-  return '<div class="ovl" data-action="closeset">'+
-    '<div class="mdl" style="width:460px" data-stop="1">'+
-      '<div class="mh">'+
-        '<div class="fl ac g8">'+ic('cog',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 요소 상세 설정</span></div>'+
-        '<button data-action="closeset" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'+
-      '<div class="mb">'+
-        '<div class="mb18"><div class="flbl" style="margin-bottom:3px">대상 항목</div>'+
-          '<div style="font-size:14px;font-weight:700">'+title+'</div></div>'+
-        '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px">이수 기준</div>'+
-        '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">진도율 기준</label>'+
-          '<div class="fl ac g8"><input type="number" value="100" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">% 이상</span></div></div>'+
-        '<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">최소 학습 시간</label>'+
-          '<div class="fl ac g8"><input type="number" value="15" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분 이상</span></div></div>'+
-        '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">동영상 재생 제어</div>'+
-        '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
-          '<div style="font-size:13px;font-weight:600">스킵(건너뛰기) 방지</div>'+
-          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 영상을 임의로 앞으로 탐색하는 것을 차단합니다</div></div>'+
-          '<button class="tog on" onclick="this.classList.toggle(\'on\')"></button></div>'+
-        '<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'+
-          '<div style="font-size:13px;font-weight:600">배속 재생 허용</div>'+
-          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">최대 2.0x 배속 기능을 활성화합니다</div></div>'+
-          '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>'+
-        '<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">의견 및 댓글</div>'+
-        '<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'+
-          '<div style="font-size:13px;font-weight:600">학습자 의견 작성 허용</div>'+
-          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 해당 항목에 의견이나 질문을 남길 수 있습니다</div></div>'+
-          '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>'+
-        '<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'+
-          '<div style="font-size:13px;font-weight:600">다른 학습자 의견 공개</div>'+
-          '<div style="font-size:11px;color:#94A3B8;margin-top:2px">다른 수강자들의 의견을 서로 볼 수 있도록 공개합니다</div></div>'+
-          '<button class="tog" onclick="this.classList.toggle(\'on\')"></button></div>'+
-      '</div>'+
-      '<div class="mf">'+
-        '<button data-action="closeset" class="btn bs2" style="padding:8px 16px;font-size:12px">취소</button>'+
-        '<button data-action="closeset" class="btn bp" style="padding:8px 16px;font-size:12px">저장</button></div>'+
-    '</div></div>';
+  return '<div class="ovl" data-action="closeset">'
+    +'<div class="mdl" style="width:460px" data-modal="1">'
+      +'<div class="mh">'
+        +'<div class="fl ac g8">'+ic('cog',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 요소 상세 설정</span></div>'
+        +'<button data-action="closeset" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'
+      +'<div class="mb2">'
+        +'<div class="mb18"><div class="flbl" style="margin-bottom:3px">대상 항목</div>'
+          +'<div style="font-size:14px;font-weight:700">'+title+'</div></div>'
+        +'<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px">이수 기준</div>'
+        +'<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">진도율 기준</label>'
+          +'<div class="fl ac g8"><input type="number" value="100" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">% 이상</span></div></div>'
+        +'<div class="fl ac sb mb14"><label style="font-size:13px;font-weight:600;color:#334155">최소 학습 시간</label>'
+          +'<div class="fl ac g8"><input type="number" value="15" style="width:60px;border:1.5px solid #E2E8F0;border-radius:8px;padding:5px 8px;text-align:center;outline:none;font-size:13px;font-weight:700;font-family:inherit"><span style="font-size:12px;color:#64748B">분 이상</span></div></div>'
+        +'<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">동영상 재생 제어</div>'
+        +'<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'
+          +'<div style="font-size:13px;font-weight:600">스킵(건너뛰기) 방지</div>'
+          +'<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 영상을 임의로 앞으로 탐색하는 것을 차단합니다</div></div>'
+          +'<button class="tog on" data-action="inlinetog"></button></div>'
+        +'<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'
+          +'<div style="font-size:13px;font-weight:600">배속 재생 허용</div>'
+          +'<div style="font-size:11px;color:#94A3B8;margin-top:2px">최대 2.0x 배속 기능을 활성화합니다</div></div>'
+          +'<button class="tog" data-action="inlinetog"></button></div>'
+        +'<div style="font-size:13px;font-weight:800;border-bottom:1px solid #F1F5F9;padding-bottom:10px;margin-bottom:14px;margin-top:20px">의견 및 댓글</div>'
+        +'<div class="fl sb mb14" style="align-items:flex-start;gap:12px"><div>'
+          +'<div style="font-size:13px;font-weight:600">학습자 의견 작성 허용</div>'
+          +'<div style="font-size:11px;color:#94A3B8;margin-top:2px">학습자가 해당 항목에 의견이나 질문을 남길 수 있습니다</div></div>'
+          +'<button class="tog" data-action="inlinetog"></button></div>'
+        +'<div class="fl sb" style="align-items:flex-start;gap:12px"><div>'
+          +'<div style="font-size:13px;font-weight:600">다른 학습자 의견 공개</div>'
+          +'<div style="font-size:11px;color:#94A3B8;margin-top:2px">다른 수강자들의 의견을 서로 볼 수 있도록 공개합니다</div></div>'
+          +'<button class="tog" data-action="inlinetog"></button></div>'
+      +'</div>'
+      +'<div class="mf">'
+        +'<button data-action="closeset" class="btn bs2" style="padding:8px 16px;font-size:12px">취소</button>'
+        +'<button data-action="closeset" class="btn bp" style="padding:8px 16px;font-size:12px">저장</button>'
+      +'</div></div></div>';
 }
 
 function libModalHTML(){
@@ -651,90 +735,285 @@ function libModalHTML(){
     return '<button class="lbc'+(S.libCat===c.id?' on':'')+'" data-action="setlibcat" data-val="'+c.id+'">'+c.l+'</button>';
   }).join('');
   var filtered=S.libCat==='all'?LIB:LIB.filter(function(i){return i.type===S.libCat;});
-  var items=filtered.length===0?
-    '<div class="emp">'+ic('info',26,'#CBD5E1')+'<p style="font-size:13px;color:#94A3B8">해당 카테고리에 등록된 항목이 없습니다</p></div>':
-    filtered.map(function(item){
+  var items=filtered.length===0
+    ?'<div class="emp">'+ic('info',26,'#CBD5E1')+'<p style="font-size:13px;color:#94A3B8">해당 카테고리에 등록된 항목이 없습니다</p></div>'
+    :filtered.map(function(item){
       var bg={video:'#DBEAFE',doc:'#F1F5F9',exam:'#EDE9FE',survey:'#FAE8FF'}[item.type]||'#F1F5F9';
       var col={video:'#2563EB',doc:'#64748B',exam:'#7C3AED',survey:'#9333EA'}[item.type]||'#64748B';
       var icn={video:'video',doc:'doc',exam:'list',survey:'list'}[item.type]||'doc';
-      return '<div class="lbi">'+
-        '<div style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+bg+';color:'+col+'">'+ic(icn,17)+'</div>'+
-        '<div class="f1">'+
-          '<div style="font-size:13px;font-weight:700">'+item.t+'</div>'+
-          '<div class="fl g10" style="font-size:11px;color:#94A3B8;margin-top:3px">'+
-            '<span style="text-transform:uppercase">'+item.type+'</span><span>'+item.time+'</span><span>'+item.date+'</span></div></div>'+
-        '<button style="padding:5px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#64748B;background:#fff;cursor:pointer;flex-shrink:0;font-family:inherit">추가</button>'+
-      '</div>';
+      return '<div class="lbi">'
+        +'<div style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+bg+';color:'+col+'">'+ic(icn,17)+'</div>'
+        +'<div class="f1 mw0"><div style="font-size:13px;font-weight:700">'+item.t+'</div>'
+          +'<div class="fl g10" style="font-size:11px;color:#94A3B8;margin-top:3px">'
+            +'<span style="text-transform:uppercase">'+item.type+'</span><span>'+item.time+'</span><span>'+item.date+'</span></div></div>'
+        +'<button class="lib-add-btn" data-action="libadd" data-libid="'+item.id+'">추가</button>'
+      +'</div>';
     }).join('');
 
-  return '<div class="ovl" data-action="closelib">'+
-    '<div class="mdl lbm" data-stop="1">'+
-      '<div class="mh">'+
-        '<div class="fl ac g8">'+ic('layers',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 항목 추가 — 콘텐츠 보관함</span></div>'+
-        '<button data-action="closelib" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'+
-      '<div class="lbs">'+
-        '<div class="lbsd">'+sideBtns+'</div>'+
-        '<div class="lbmn">'+
-          '<div class="fl g8 mb14">'+
-            '<div style="position:relative;flex:1">'+
-              '<div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex">'+ic('srch',13,'#94A3B8')+'</div>'+
-              '<input class="fld" style="padding-left:34px" placeholder="보관함 내 학습 항목 검색..."></div>'+
-            '<button class="btn bp" style="padding:9px 14px;font-size:12px">검색</button></div>'+
-          '<div class="lbl">'+items+'</div>'+
-          '<div class="fl sb ac" style="margin-top:14px;padding-top:14px;border-top:1px solid #F1F5F9">'+
-            '<span style="font-size:12px;color:#94A3B8">원하는 항목이 없나요?</span>'+
-            '<button style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#334155;cursor:pointer;font-family:inherit">'+ic('up',12)+' PC에서 파일 업로드</button></div>'+
-        '</div></div></div></div>';
+  return '<div class="ovl" data-action="closelib">'
+    +'<div class="mdl lbm" data-modal="1">'
+      +'<div class="mh">'
+        +'<div class="fl ac g8">'+ic('layers',15,'#4F46E5')+'<span style="font-size:14px;font-weight:800">학습 항목 추가 — 콘텐츠 보관함</span></div>'
+        +'<button data-action="closelib" style="background:none;border:none;cursor:pointer;color:#94A3B8;display:flex;align-items:center">'+ic('x',17)+'</button></div>'
+      +'<div class="lbs">'
+        +'<div class="lbsd" id="lib-sidebar">'+sideBtns+'</div>'
+        +'<div class="lbmn">'
+          +'<div class="fl g8 mb14">'
+            +'<div style="position:relative;flex:1"><div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex">'+ic('srch',13,'#94A3B8')+'</div>'
+              +'<input class="fld" style="padding-left:34px" placeholder="보관함 내 학습 항목 검색..."></div>'
+            +'<button class="btn bp" style="padding:9px 14px;font-size:12px">검색</button></div>'
+          +'<div class="lbl" id="lib-list">'+items+'</div>'
+          +'<div class="fl sb ac" style="margin-top:14px;padding-top:14px;border-top:1px solid #F1F5F9">'
+            +'<span style="font-size:12px;color:#94A3B8">원하는 항목이 없나요?</span>'
+            +'<button style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;font-weight:700;color:#334155;cursor:pointer;font-family:inherit">'+ic('up',12)+' PC에서 파일 업로드</button>'
+          +'</div></div></div></div></div>';
 }
 
-// ─── EVENT DELEGATION ─────────────────────────────────────────────────────────
-function bind(){
-  document.getElementById('app').addEventListener('click',function(e){
-    var el=e.target;
-    // walk up to find data-action
-    while(el&&el.id!=='app'){
-      if(el.dataset&&el.dataset.stop){e.stopPropagation();return;}
-      if(el.dataset&&el.dataset.action){
-        var a=el.dataset.action;
-        if(a==='seltype'){upd({ctype:el.dataset.val,view:'editor'});return;}
-        if(a==='goback'){upd({view:'selection',ctype:null,rule:'single',sessions:[{id:1,date:'',st:'',et:'',place:'',cap:30},{id:2,date:'',st:'',et:'',place:'',cap:30}],mods:[]});return;}
-        if(a==='tog'){var t2=Object.assign({},S.tog);t2[el.dataset.key]=!t2[el.dataset.key];upd({tog:t2});return;}
-        if(a==='setrule'){upd({rule:el.dataset.val});return;}
-        if(a==='togday'){var d=el.dataset.val;var arr=S.days.slice();var i=arr.indexOf(d);if(i>=0)arr.splice(i,1);else arr.push(d);upd({days:arr});return;}
-        if(a==='batch'){upd({sessions:[{id:201,date:'2026-03-02',st:'22:00',et:'23:00',place:'',cap:30},{id:202,date:'2026-03-04',st:'22:00',et:'23:00',place:'',cap:30},{id:203,date:'2026-03-06',st:'22:00',et:'23:00',place:'',cap:30},{id:204,date:'2026-03-09',st:'22:00',et:'23:00',place:'',cap:30}]});return;}
-        if(a==='addsess'){var ss=S.sessions.slice();ss.push({id:Date.now(),date:'',st:'',et:'',place:'',cap:30});upd({sessions:ss});return;}
-        if(a==='remsess'){upd({sessions:S.sessions.filter(function(s){return s.id!==parseInt(el.dataset.sid);})});return;}
-        if(a==='addmod'){var ms=S.mods.slice();var mn=(S.ctype==='blended'?3:2)+ms.length;ms.push({id:Date.now(),title:'새 챕터 '+mn});upd({mods:ms});return;}
-        if(a==='removemod'){upd({mods:S.mods.filter(function(m){return m.id!==parseInt(el.dataset.mid);})});return;}
-        if(a==='toblended'){upd({ctype:'blended'});return;}
-        if(a==='openlib'){upd({libOpen:true});return;}
-        if(a==='closelib'){upd({libOpen:false});return;}
-        if(a==='setlibcat'){upd({libCat:el.dataset.val});return;}
-        if(a==='opensettings'){upd({setOpen:true,setTitle:el.dataset.title||''});return;}
-        if(a==='closeset'){upd({setOpen:false,setTitle:''});return;}
-        if(a==='reqtog'){el.classList.toggle('rqr');el.classList.toggle('rqo');el.textContent=el.classList.contains('rqr')?'필수':'선택';return;}
-        return;
-      }
-      el=el.parentElement;
+// ─── DRAG AND DROP ────────────────────────────────────────────────────────────
+function setupRoadmapDnD(){
+  var rmb=document.getElementById('roadmap-body');
+  if(!rmb) return;
+
+  rmb.addEventListener('dragstart',function(e){
+    var el=e.target.closest('[draggable=true]');
+    if(!el) return;
+    drag.el=el;
+    drag.chapIdx=el.dataset.chap;
+    drag.itemIdx=parseInt(el.dataset.item);
+    e.dataTransfer.effectAllowed='move';
+    setTimeout(function(){el.classList.add('dragging');},0);
+  });
+
+  rmb.addEventListener('dragend',function(){
+    if(drag.el) drag.el.classList.remove('dragging');
+    document.querySelectorAll('.drag-over').forEach(function(n){n.classList.remove('drag-over');});
+    drag={el:null,chapIdx:null,itemIdx:null,overEl:null};
+  });
+
+  rmb.addEventListener('dragover',function(e){
+    e.preventDefault();
+    var target=e.target.closest('[draggable=true]');
+    if(!target||target===drag.el) return;
+    if(drag.overEl&&drag.overEl!==target) drag.overEl.classList.remove('drag-over');
+    target.classList.add('drag-over');
+    drag.overEl=target;
+    e.dataTransfer.dropEffect='move';
+  });
+
+  rmb.addEventListener('dragleave',function(e){
+    var related=e.relatedTarget;
+    if(drag.overEl&&(!related||!drag.overEl.contains(related))){
+      drag.overEl.classList.remove('drag-over');
+      drag.overEl=null;
     }
   });
-  // session input bindings
-  document.querySelectorAll('.s-date,.s-st,.s-et,.s-pl,.s-cp').forEach(function(inp){
-    inp.addEventListener('change',function(){
-      var sid=parseInt(inp.dataset.sid);
-      var key={'.s-date':'date','.s-st':'st','.s-et':'et','.s-pl':'place','.s-cp':'cap'}['.'+inp.className.split(' ').find(function(c){return c.startsWith('s-')})];
-      if(!key) return;
-      S.sessions=S.sessions.map(function(s){
-        if(s.id!==sid) return s;
-        var n=Object.assign({},s);
-        n[key]=key==='cap'?parseInt(inp.value)||0:inp.value;
-        return n;
-      });
-    });
+
+  rmb.addEventListener('drop',function(e){
+    e.preventDefault();
+    if(!drag.el||!drag.overEl) return;
+    var fromChap=drag.chapIdx;
+    var fromIdx=drag.itemIdx;
+    var toChap=drag.overEl.dataset.chap;
+    var toIdx=parseInt(drag.overEl.dataset.item);
+    if(fromChap===toChap&&fromIdx!==toIdx){
+      var arr=(S.chapItems[fromChap]||[]).slice();
+      var item=arr.splice(fromIdx,1)[0];
+      arr.splice(toIdx,0,item);
+      S.chapItems[fromChap]=arr;
+      patchRoadmap();
+    }
   });
 }
 
-render();
+// ─── SINGLE EVENT LISTENER (bound once) ──────────────────────────────────────
+document.getElementById('app').addEventListener('click',function(e){
+  // Find closest element with data-action
+  var el=e.target;
+  while(el&&el.id!=='app'){
+    // Modal content - don't close on click inside
+    if(el.dataset&&el.dataset.modal){
+      // Only propagate to specific action buttons inside modal
+      var a2=e.target.closest('[data-action]');
+      if(!a2) return;
+      var act2=a2.dataset.action;
+      if(act2==='closeset'||act2==='closelib'||act2==='setlibcat'||act2==='libadd'||act2==='inlinetog'||act2==='reqtog'){
+        break; // let it fall through to handler below
+      }
+      return;
+    }
+    el=el.parentElement;
+  }
+
+  var target=e.target.closest('[data-action]');
+  if(!target) return;
+  var a=target.dataset.action;
+
+  if(a==='seltype'){
+    S.ctype=target.dataset.val; S.view='editor';
+    fullRender(); return;
+  }
+  if(a==='goback'){
+    S.view='selection'; S.ctype=null; S.rule='single';
+    S.sessions=[{id:1,date:'',st:'',et:'',place:'',cap:30},{id:2,date:'',st:'',et:'',place:'',cap:30}];
+    S.mods=[]; S.chapItems={'0':['video-신입사원 환영사 및 비전 공유','doc-사내 핵심가치 가이드북']};
+    fullRender(); return;
+  }
+  if(a==='tog'){
+    var k=target.dataset.key;
+    S.tog[k]=!S.tog[k];
+    target.classList.toggle('on'); return;
+  }
+  if(a==='inlinetog'){
+    target.classList.toggle('on'); return;
+  }
+  if(a==='reqtog'){
+    target.classList.toggle('rqr'); target.classList.toggle('rqo');
+    target.textContent=target.classList.contains('rqr')?'필수':'선택'; return;
+  }
+  if(a==='setrule'){
+    S.rule=target.dataset.val;
+    var rg=document.getElementById('rule-grid');
+    if(rg) rg.innerHTML=ruleCardsHTML();
+    var sc=document.getElementById('sessions-content');
+    if(sc) sc.innerHTML=S.rule==='all'?batchContent():manualContent();
+    return;
+  }
+  if(a==='togday'){
+    var d=target.dataset.day;
+    var idx=S.days.indexOf(d);
+    if(idx>=0) S.days.splice(idx,1); else S.days.push(d);
+    target.classList.toggle('on'); return;
+  }
+  if(a==='batch'){
+    S.sessions=[{id:201,date:'2026-03-02',st:'22:00',et:'23:00',place:'',cap:30},{id:202,date:'2026-03-04',st:'22:00',et:'23:00',place:'',cap:30},{id:203,date:'2026-03-06',st:'22:00',et:'23:00',place:'',cap:30},{id:204,date:'2026-03-09',st:'22:00',et:'23:00',place:'',cap:30}];
+    var sc2=document.getElementById('sessions-content');
+    if(sc2) sc2.innerHTML=batchContent();
+    patchRoadmap(); return;
+  }
+  if(a==='addsess'){
+    S.sessions.push({id:Date.now(),date:'',st:'',et:'',place:'',cap:30});
+    var sc3=document.getElementById('sessions-content');
+    if(sc3) sc3.innerHTML=manualContent();
+    patchRoadmap(); return;
+  }
+  if(a==='remsess'){
+    var sid=parseInt(target.dataset.sid);
+    S.sessions=S.sessions.filter(function(s){return s.id!==sid;});
+    var sc4=document.getElementById('sessions-content');
+    if(sc4) sc4.innerHTML=S.rule==='all'?batchContent():manualContent();
+    patchRoadmap(); return;
+  }
+  if(a==='addmod'){
+    var chN2=(S.ctype==='blended'?3:2)+S.mods.length;
+    var newId=Date.now();
+    S.mods.push({id:newId,title:'새 챕터 '+chN2});
+    S.chapItems['c'+newId]=[];
+    patchRoadmap(); return;
+  }
+  if(a==='removemod'){
+    var mid=parseInt(target.dataset.mid);
+    S.mods=S.mods.filter(function(m){return m.id!==mid;});
+    delete S.chapItems['c'+mid];
+    patchRoadmap(); return;
+  }
+  if(a==='rmitem'){
+    var ci=target.dataset.chap;
+    var ii=parseInt(target.dataset.item);
+    if(S.chapItems[ci]){
+      S.chapItems[ci].splice(ii,1);
+      patchRoadmap();
+    } return;
+  }
+  if(a==='toblended'){
+    S.ctype='blended'; fullRender(); return;
+  }
+  if(a==='openlib'){
+    S.libOpen=true; S.libTargetChap=target.dataset.chap||'0';
+    patchModals(); return;
+  }
+  if(a==='closelib'){
+    S.libOpen=false; S.libTargetChap=null;
+    patchModals(); return;
+  }
+  if(a==='closeset'){
+    S.setOpen=false; S.setTitle='';
+    patchModals(); return;
+  }
+  if(a==='setlibcat'){
+    S.libCat=target.dataset.val;
+    // Only update sidebar active state and list — no full modal re-render
+    var sidebar=document.getElementById('lib-sidebar');
+    if(sidebar){
+      sidebar.querySelectorAll('.lbc').forEach(function(b){
+        b.classList.toggle('on', b.dataset.val===S.libCat);
+      });
+    }
+    var listEl=document.getElementById('lib-list');
+    if(listEl){
+      var filtered2=S.libCat==='all'?LIB:LIB.filter(function(i){return i.type===S.libCat;});
+      listEl.innerHTML=filtered2.length===0
+        ?'<div class="emp">'+ic('info',26,'#CBD5E1')+'<p style="font-size:13px;color:#94A3B8">해당 카테고리에 등록된 항목이 없습니다</p></div>'
+        :filtered2.map(function(item){
+          var bg={video:'#DBEAFE',doc:'#F1F5F9',exam:'#EDE9FE',survey:'#FAE8FF'}[item.type]||'#F1F5F9';
+          var col={video:'#2563EB',doc:'#64748B',exam:'#7C3AED',survey:'#9333EA'}[item.type]||'#64748B';
+          var icn={video:'video',doc:'doc',exam:'list',survey:'list'}[item.type]||'doc';
+          return '<div class="lbi">'
+            +'<div style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+bg+';color:'+col+'">'+ic(icn,17)+'</div>'
+            +'<div class="f1 mw0"><div style="font-size:13px;font-weight:700">'+item.t+'</div>'
+              +'<div class="fl g10" style="font-size:11px;color:#94A3B8;margin-top:3px">'
+                +'<span style="text-transform:uppercase">'+item.type+'</span><span>'+item.time+'</span><span>'+item.date+'</span></div></div>'
+            +'<button class="lib-add-btn" data-action="libadd" data-libid="'+item.id+'">추가</button>'
+          +'</div>';
+        }).join('');
+    }
+    return;
+  }
+  if(a==='libadd'){
+    // Add selected lib item to target chapter
+    var libid=target.dataset.libid;
+    var libItem=null;
+    for(var li=0;li<LIB.length;li++){if(LIB[li].id===libid){libItem=LIB[li];break;}}
+    if(!libItem) return;
+    var chap=S.libTargetChap||'0';
+    if(!S.chapItems[chap]) S.chapItems[chap]=[];
+    S.chapItems[chap].push(libItem.type+'-'+libItem.t);
+    // Visual feedback on button
+    target.textContent='✓ 추가됨';
+    target.style.background='#ECFDF5'; target.style.color='#059669'; target.style.borderColor='#A7F3D0';
+    target.disabled=true;
+    patchRoadmap(); return;
+  }
+  if(a==='opensettings'){
+    S.setOpen=true; S.setTitle=target.dataset.title||'';
+    patchModals(); return;
+  }
+});
+
+// Session field changes (delegated, no re-render)
+document.getElementById('app').addEventListener('change',function(e){
+  var inp=e.target.closest('.sess-f');
+  if(!inp) return;
+  var sid=parseInt(inp.dataset.sid);
+  var fld=inp.dataset.fld;
+  S.sessions=S.sessions.map(function(s){
+    if(s.id!==sid) return s;
+    var n=Object.assign({},s);
+    n[fld]=fld==='cap'?parseInt(inp.value)||0:inp.value;
+    return n;
+  });
+  patchRoadmap();
+});
+
+// Mod title change
+document.getElementById('app').addEventListener('input',function(e){
+  var inp=e.target.closest('[data-action=modtitle]');
+  if(!inp) return;
+  var mid=parseInt(inp.dataset.mid);
+  S.mods=S.mods.map(function(m){return m.id===mid?Object.assign({},m,{title:inp.value}):m;});
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+fullRender();
 </script>
 </body>
 </html>
